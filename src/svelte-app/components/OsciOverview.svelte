@@ -11,7 +11,7 @@
 
 	// Colors (matching artic-design.scss)
 	const COLOR_TRANSPARENT_LIGHT_GREY = 'rgba(152, 152, 152, 0.18)';
-	const COLOR_WHITE = '#fff';
+	const COLOR_WHITE = '#F1EFE4';
 
 	function hasAudioBuffer(): boolean {
 		return soundHandlerService.audioBuffer && typeof soundHandlerService.audioBuffer.length === 'number' && soundHandlerService.audioBuffer.length > 0;
