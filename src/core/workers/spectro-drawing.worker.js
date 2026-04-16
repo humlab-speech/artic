@@ -63,6 +63,8 @@ SpectroDrawingWorker.prototype = {
 			[0, 255, 0],
 			[0, 0, 0]
 		];
+		// Grayscale endpoint: "white" = #F1EFE4 = RGB(241,239,228), black = RGB(0,0,0)
+		global.spectroWhite = [241, 239, 228];
 		global.samplesPerPxl = 0;
 		global.sampleRate = 0;
 		global.preEmphasisFilterFactor = 0.97;
@@ -462,16 +464,16 @@ SpectroDrawingWorker.prototype = {
 								global.resultImgArr[index + 3] = global.transparency;
 
 							} else {
-								global.resultImgArr[index + 0] = rgb;
-								global.resultImgArr[index + 1] = rgb;
-								global.resultImgArr[index + 2] = rgb;
+								global.resultImgArr[index + 0] = Math.round(global.spectroWhite[0] * rgb / 255);
+								global.resultImgArr[index + 1] = Math.round(global.spectroWhite[1] * rgb / 255);
+								global.resultImgArr[index + 2] = Math.round(global.spectroWhite[2] * rgb / 255);
 								global.resultImgArr[index + 3] = global.transparency;
 							}
 
 						} else {
-							global.resultImgArr[index + 0] = rgb;
-							global.resultImgArr[index + 1] = rgb;
-							global.resultImgArr[index + 2] = rgb;
+							global.resultImgArr[index + 0] = Math.round(global.spectroWhite[0] * rgb / 255);
+							global.resultImgArr[index + 1] = Math.round(global.spectroWhite[1] * rgb / 255);
+							global.resultImgArr[index + 2] = Math.round(global.spectroWhite[2] * rgb / 255);
 							global.resultImgArr[index + 3] = global.transparency;
 						}
 					}
@@ -482,9 +484,9 @@ SpectroDrawingWorker.prototype = {
 					py = Math.floor(global.imgHeight - (global.pixelHeight * (i - 2)));
 
 					index = (px + (py * global.imgWidth)) * 4;
-					global.resultImgArr[index + 0] = rgb;
-					global.resultImgArr[index + 1] = rgb;
-					global.resultImgArr[index + 2] = rgb;
+					global.resultImgArr[index + 0] = Math.round(global.spectroWhite[0] * rgb / 255);
+					global.resultImgArr[index + 1] = Math.round(global.spectroWhite[1] * rgb / 255);
+					global.resultImgArr[index + 2] = Math.round(global.spectroWhite[2] * rgb / 255);
 					global.resultImgArr[index + 3] = global.transparency;
 				}
 			}

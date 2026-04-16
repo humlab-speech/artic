@@ -15,7 +15,7 @@
 	let { trackName = '', order = 0 }: { trackName: string; order: number } = $props();
 
 	// Colors
-	const COLOR_WHITE = '#fff';
+	const COLOR_WHITE = '#F1EFE4';
 	const COLOR_TRANSPARENT_RED = 'rgba(255, 0, 0, 0.3)';
 
 	let mainCanvas: HTMLCanvasElement;

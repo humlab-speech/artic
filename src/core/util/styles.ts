@@ -4,7 +4,7 @@
  */
 export const styles = {
 	colorBlack: '#000',
-	colorWhite: '#fff',
+	colorWhite: '#F1EFE4',
 	colorBlue: '#0DC5FF',
 	colorRed: '#f00',
 	colorYellow: '#ff0',
