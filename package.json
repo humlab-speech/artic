@@ -1,6 +1,6 @@
 {
   "name": "artic",
-  "version": "1.5.3-humlab-1.8.9",
+  "version": "1.5.3-humlab-1.9.0",
   "description": "Artic is an online and offline Web-App for labeling, visualizing and correcting speech and derived speech data.",
   "main": "app/scripts/app.js",
   "contributors": [
