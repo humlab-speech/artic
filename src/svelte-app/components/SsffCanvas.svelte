@@ -142,7 +142,7 @@
 						curSampleInColTime = (1 / sR * curSampleInCol) + sT;
 						x = (curSampleInColTime - startTimeVP) / (endTimeVP - startTimeVP) * canvas.width;
 						y = canvas.height - ((curArr[contourNr] - minVal) / (maxVal - minVal) * canvas.height);
-						ctx.arc(x, y - 1, 2, 0, 2 * Math.PI, false);
+						ctx.arc(x, y - 1, 3, 0, 2 * Math.PI, false);
 						ctx.lineTo(x, y);
 					});
 
