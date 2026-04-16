@@ -318,7 +318,7 @@
 	{/if}
 
 	<button class="artic-button-icon" id="aboutBtn" style="float: right;" onclick={aboutBtn}>
-		<img src="/assets/artic-emu.svg" class="_35px" alt="About" />
+		<img src="/assets/artic_crystal_icon_dark.svg" class="_35px" alt="About" />
 	</button>
 </div>
 
