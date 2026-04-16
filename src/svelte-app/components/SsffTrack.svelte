@@ -17,6 +17,7 @@
 	// Colors
 	const COLOR_WHITE = '#F1EFE4';
 	const COLOR_TRANSPARENT_RED = 'rgba(255, 0, 0, 0.3)';
+	const CONTOUR_COLORS = ['#EABAB9','#73A790','#D7B17C','#2A4765','#F0581A','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
 
 	let mainCanvas: HTMLCanvasElement;
 	let ssffCanvas: HTMLCanvasElement;
@@ -121,14 +122,8 @@
 			curSampleArrs[0].forEach((contourVal: number, contourNr: number) => {
 				if (isEmptyObj(minMaxContourLims) || (contourNr >= minMaxContourLims.minContourIdx && contourNr <= minMaxContourLims.maxContourIdx)) {
 					// Set color
-					if (isEmptyObj(minMaxContourLims)) {
-						ctx.strokeStyle = `hsl(${contourNr * (360 / curSampleArrs[0].length)},80%, 50%)`;
-						ctx.fillStyle = ctx.strokeStyle;
-					} else {
-						const l = (minMaxContourLims.maxContourIdx - minMaxContourLims.minContourIdx) + 1;
-						ctx.strokeStyle = `hsl(${contourNr * (360 / l)},80%, 50%)`;
-						ctx.fillStyle = ctx.strokeStyle;
-					}
+					ctx.strokeStyle = CONTOUR_COLORS[contourNr % CONTOUR_COLORS.length];
+					ctx.fillStyle = ctx.strokeStyle;
 
 					// Overwrite with preconfigured colors
 					const contColors = configProviderService.getContourColorsOfTrack(assignmentTrackName || trackName);

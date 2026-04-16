@@ -11,6 +11,8 @@
 
 	let { trackName }: { trackName: string } = $props();
 
+	const CONTOUR_COLORS = ['#EABAB9','#73A790','#D7B17C','#2A4765','#F0581A','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
+
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 	let assignmentTrackName = '';
@@ -95,14 +97,8 @@
 						contourNr <= minMaxContourLims.maxContourIdx)
 				) {
 					// set color
-					if (isEmpty(minMaxContourLims)) {
-						ctx.strokeStyle = 'hsl(' + contourNr * (360 / curSampleArrs[0].length) + ',80%, 50%)';
-						ctx.fillStyle = 'hsl(' + contourNr * (360 / curSampleArrs[0].length) + ',80%, 50%)';
-					} else {
-						const l = (minMaxContourLims.maxContourIdx - minMaxContourLims.minContourIdx) + 1;
-						ctx.strokeStyle = 'hsl(' + contourNr * (360 / l) + ',80%, 50%)';
-						ctx.fillStyle = 'hsl(' + contourNr * (360 / l) + ',80%, 50%)';
-					}
+					ctx.strokeStyle = CONTOUR_COLORS[contourNr % CONTOUR_COLORS.length];
+					ctx.fillStyle = ctx.strokeStyle;
 
 					// overwrite color settings if preconfigured
 					let contColors: any;
