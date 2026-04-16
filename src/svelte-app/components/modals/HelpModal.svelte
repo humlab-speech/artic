@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { modalService } from '../../stores/services';
 	import showdown from 'showdown';
+	import { version } from '../../../../package.json';
 
 	const converter = new showdown.Converter();
 
@@ -18,7 +19,10 @@
 		try {
 			const res = await fetch(tabs[idx].url);
 			const text = await res.text();
-			htmlContent = text;
+			htmlContent = text
+				.replace('@@versionnr', version)
+				.replace('@@timestamp', __BUILD_TIME__)
+				.replace('@@sha1', __GIT_SHA__);
 		} catch {
 			htmlContent = '<p>Could not load help content.</p>';
 		}

@@ -1,8 +1,18 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
+import { execSync } from 'child_process';
+
+function getGitSha(): string {
+	try { return execSync('git rev-parse --short HEAD').toString().trim(); }
+	catch { return 'unknown'; }
+}
 
 export default defineConfig({
+	define: {
+		__BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+		__GIT_SHA__: JSON.stringify(getGitSha()),
+	},
 	plugins: [svelte()],
 	resolve: {
 		alias: {
