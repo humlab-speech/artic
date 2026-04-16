@@ -1,5 +1,5 @@
-@import 'artic-design';
-@import 'mixins';
+@use 'artic-design' as *;
+@use 'mixins' as *;
 
 .artic-preview {
     position: relative;

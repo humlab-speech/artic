@@ -91,9 +91,12 @@
 								onmouseleave={() => dropdownOpen[levelName] = false}
 							>
 								{#each configProviderService.getAttrDefsNames(levelName) || [] as attrName, i}
-									<li onclick={() => setCurrentAttrDef(levelName, attrName, i)}>
-										&rarr; {attrName}
-									</li>
+									<li
+										role="menuitem"
+										tabindex="0"
+										onclick={() => setCurrentAttrDef(levelName, attrName, i)}
+										onkeydown={(e) => e.key === 'Enter' && setCurrentAttrDef(levelName, attrName, i)}
+									>&rarr; {attrName}</li>
 								{/each}
 							</ul>
 						{/if}

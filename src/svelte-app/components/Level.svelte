@@ -18,7 +18,7 @@
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
-	let levelDef: any = undefined;
+	let levelDef: any = $state(undefined);
 	let open = true;
 
 	// --- helpers ---
@@ -302,7 +302,7 @@
 	});
 </script>
 
-<div class="artic-level" onmouseleave={onMouseLeave}>
+<div class="artic-level" role="region" aria-label={levelName} onmouseleave={onMouseLeave}>
 	<div class="artic-level-container">
 		<canvas
 			bind:this={canvas}
@@ -320,6 +320,7 @@
 				<button
 					onclick={() => changeCurAttrDef(attrDef.name, i)}
 					style={getAttrDefBtnColor(attrDef.name)}
+					aria-label={attrDef.name}
 				></button>
 			</li>
 		{/each}

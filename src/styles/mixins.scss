@@ -1,4 +1,5 @@
 // scss mixins used by Artic
+@use 'sass:list';
 
 @mixin vendor-prefix($name, $argument) {
   -webkit-#{$name}: #{$argument};
@@ -53,11 +54,11 @@
  * mixin for vedor prefixing animations
  */
 @mixin animation($animate...) {
-    $max: length($animate);
+    $max: list.length($animate);
     $animations: '';
 
     @for $i from 1 through $max {
-        $animations: #{$animations + nth($animate, $i)};
+        $animations: #{$animations + list.nth($animate, $i)};
 
         @if $i < $max {
             $animations: #{$animations + ", "};

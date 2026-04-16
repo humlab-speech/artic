@@ -39,10 +39,11 @@
 			<ul class="artic-tabbed-menu">
 				{#each tabs as tab, idx}
 					<li>
-						<a class="artic-tabbed-link" href="#"
+						<button class="artic-tabbed-link"
 							class:active={activeTab === idx}
-							onclick={(e) => { e.preventDefault(); loadTab(idx); }}
-						>{tab.title}</a>
+							onclick={() => loadTab(idx)}
+							type="button"
+						>{tab.title}</button>
 					</li>
 				{/each}
 			</ul>

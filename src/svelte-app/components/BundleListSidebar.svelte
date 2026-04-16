@@ -82,7 +82,7 @@
 		return loadedMetaDataService.isSessionOpen ? loadedMetaDataService.isSessionOpen(session) : true;
 	}
 
-	let fileInput: HTMLInputElement;
+	let fileInput: HTMLInputElement | undefined = $state();
 
 	// Drop zone handlers
 	function onDragOver(e: DragEvent) {
@@ -113,7 +113,7 @@
 {#if sideBarOpen}
 <div class="artic-bundle-outer">
 	<div>
-		<h3>
+		<div>
 			<div style="text-align: center; padding: 4px;">
 				<input
 					class="artic-filter"
@@ -124,7 +124,7 @@
 					onblur={() => viewStateService.setcursorInTextField(false)}
 				/>
 			</div>
-		</h3>
+		</div>
 		{#if showDropZone}
 			<input
 				bind:this={fileInput}
@@ -138,6 +138,7 @@
 				ondragover={onDragOver}
 				ondrop={onDrop}
 				onclick={onDropZoneClick}
+				onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && onDropZoneClick()}
 				role="button"
 				tabindex="0"
 				aria-label="Drop zone — click to open file dialog"
@@ -148,7 +149,7 @@
 			<div class="artic-bundle-container">
 				{#each groupedBundles as group}
 					{#if group.session || groupedBundles.length > 1}
-					<div class="artic-bundle-session" onclick={() => toggleSession(group.session)} role="button" tabindex="0">
+					<div class="artic-bundle-session" onclick={() => toggleSession(group.session)} onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSession(group.session)} role="button" tabindex="0">
 						<div>
 							<i class="material-icons" style="font-size: 14px; vertical-align: middle;">
 								{isSessionOpen(group.session) ? 'expand_more' : 'chevron_right'}
@@ -161,10 +162,12 @@
 						<ul>
 							{#each group.bundles as bndl, i}
 								{#if isFiltered(bndl)}
+									<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 									<li class="artic-bundle-item"
 										class:artic-bundle-last={i === group.bundles.length - 1}
 										onclick={() => loadBundle(bndl)}
-										role="button"
+										onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && loadBundle(bndl)}
 										tabindex="0"
 										style={getBndlColor(bndl)}
 									>

@@ -63,11 +63,11 @@
 		style="width: {w}px; height: {h}px; top: calc(100% - {h}px);"
 	>
 		<!-- Corner resizer -->
-		<div class="corner" onmousedown={onMouseDown('corner')}></div>
+		<div class="corner" role="button" aria-label="Resize corner" tabindex="0" onmousedown={onMouseDown('corner')}></div>
 		<!-- Top border resizer -->
-		<div class="topBorder" onmousedown={onMouseDown('top')}></div>
+		<div class="topBorder" role="button" aria-label="Resize top" tabindex="0" onmousedown={onMouseDown('top')}></div>
 		<!-- Left border resizer -->
-		<div class="leftBorder" onmousedown={onMouseDown('left')}></div>
+		<div class="leftBorder" role="button" aria-label="Resize left" tabindex="0" onmousedown={onMouseDown('left')}></div>
 
 		{#if canvasType === 'DOTS'}
 			<DotsCanvas />

@@ -284,7 +284,7 @@
 							onmouseleave={() => dropdown = false}
 						>
 							{#each demoDBs as curDB, i}
-								<li onclick={() => openDemoDB(curDB)} id="demo{i}" role="menuitem">{curDB}</li>
+								<li onclick={() => openDemoDB(curDB)} onkeydown={(e) => e.key === 'Enter' && openDemoDB(curDB)} id="demo{i}" role="menuitem">{curDB}</li>
 							{/each}
 						</ul>
 					{/if}

@@ -1,6 +1,6 @@
-@import 'artic-design';
-@import 'font';
-@import 'mixins';
+@use 'artic-design' as *;
+@use 'font' as *;
+@use 'mixins' as *;
 
 .artic-largetextinputfield {
 

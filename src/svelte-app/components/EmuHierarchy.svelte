@@ -18,10 +18,10 @@ import {
 // Color constants (from artic-design.scss :export block)
 const COLOR_DARK_GREY = '#303030';
 const COLOR_WHITE = '#ffffff';
-const COLOR_BLUE = '#0DC5FF';
+const COLOR_BLUE = '#2A4765';
 const COLOR_RED = '#f00';
 const COLOR_YELLOW = '#ff0';
-const COLOR_GREY = '#424242';
+const COLOR_GREY = '#73A790';
 const COLOR_TRANSPARENT_GREY = 'rgba(22, 22, 22, 0.1)';
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────

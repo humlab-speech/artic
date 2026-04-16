@@ -31,10 +31,11 @@
 	<h3>Perspectives</h3>
 	<ul>
 		{#each perspectives as persp}
+			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<li
 				class={curPerspIdx === -1 || perspectives[curPerspIdx]?.name === persp.name ? 'artic-curSelPerspLi' : 'artic-perspLi'}
 				onclick={() => changePerspective(persp)}
-				role="button"
 				tabindex="0"
 				onkeydown={(e) => e.key === 'Enter' && changePerspective(persp)}
 			>

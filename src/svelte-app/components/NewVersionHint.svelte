@@ -13,7 +13,7 @@
 
 {#if show}
 <div class="artic-aboutHint">
-	<button class="artic-aboutHint-hidden" onclick={onAboutClick}></button>
+	<button class="artic-aboutHint-hidden" onclick={onAboutClick} aria-label="More information about this version"></button>
 	Welcome to the artic Version {version}
 	<div class="artic-aboutHint-arrow">click here for more information ⇧</div>
 </div>

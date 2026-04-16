@@ -1,6 +1,6 @@
-@import 'artic-design';
-@import 'font';
-@import 'mixins';
+@use 'artic-design' as *;
+@use 'font' as *;
+@use 'mixins' as *;
 
 .artic-nav-wrap {
 	z-index: 99999;
@@ -64,8 +64,8 @@
 	display: inline-block;
     background: transparent;
     border-radius: 0;
-    border: 1px solid var(--color-black);
-    color: var(--color-black);
+    border: 1.5px solid var(--text-primary);
+    color: var(--text-primary);
     text-decoration: none;
     text-align: center;
     margin: 0;
@@ -75,18 +75,18 @@
     outline: none;
     @extend .artic-font-small;
     &:hover:enabled {
-		background-color: var(--color-black);
-		color: var(--color-white);
+		background-color: var(--text-primary);
+		color: var(--bg-primary);
 	}
 	&:disabled {
 	    pointer-events: none;
-	    color:rgb(33,217,255);
-	    border:1px solid rgb(33,217,255);
+	    color: #888;
+	    border: 1.5px solid #888;
     }
 	&:active {
 		top:1px;
-		background-color: var(--color-white);
-		color: var(--color-black);
+		background-color: var(--text-primary);
+		color: var(--bg-primary);
     }
 }
 
@@ -98,7 +98,7 @@
     top: -2px;
     background: var(--color-blue);
     border: 1px solid var(--color-blue);
-    color: var(--color-black);
+    color: var(--color-white);
 	&:hover {
     	background: var(--color-blue);
 	    border: 1px solid var(--color-blue);
@@ -110,7 +110,7 @@
     display:inline-block;
     position: relative;
 	background: transparent;
-	color: var(--color-black);
+	color: var(--text-primary);
 	border: 0;
     width: 40px;
     height: 40px;

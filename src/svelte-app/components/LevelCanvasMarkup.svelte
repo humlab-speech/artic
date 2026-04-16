@@ -548,6 +548,7 @@
 	onmousedown={onMouseDown}
 	onmouseup={onMouseUp}
 	onmouseout={onMouseOut}
+	onblur={onMouseOut}
 	ontouchstart={onTouchStart}
 	ontouchmove={onTouchMove}
 	ontouchend={onTouchEnd}

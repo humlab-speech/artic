@@ -184,6 +184,7 @@
 	onmousemove={handleMouseMove}
 	onmouseup={handleMouseUp}
 	onmouseout={handleMouseOut}
+	onblur={handleMouseOut}
 	ontouchstart={handleTouchStart}
 	ontouchmove={handleTouchMove}
 	ontouchend={handleTouchEnd}

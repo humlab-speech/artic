@@ -411,7 +411,7 @@
 		<canvas
 			bind:this={markupCanvas}
 			class="artic-timelineCanvasMarkup"
-						role="presentation"
+						aria-hidden="true"
 			onmousedown={handleMouseDown}
 			onmouseup={handleMouseUp}
 			onmousemove={handleMouseMove}

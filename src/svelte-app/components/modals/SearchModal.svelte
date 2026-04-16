@@ -5,9 +5,9 @@
 
 	let curHierPathIdx = $state(0);
 	let curLevels = $state<string[]>(hierPaths.possible[0] || []);
-	let curLevel = $state(curLevels[0] || '');
-	let curAttrDefs = $state<string[]>(configProviderService.getAttrDefsNames(curLevel) || []);
-	let curAttrDef = $state(curAttrDefs[0] || '');
+	let curLevel = $state(hierPaths.possible[0]?.[0] || '');
+	let curAttrDefs = $state<string[]>(configProviderService.getAttrDefsNames(hierPaths.possible[0]?.[0] || '') || []);
+	let curAttrDef = $state((configProviderService.getAttrDefsNames(hierPaths.possible[0]?.[0] || '') || [])[0] || '');
 	let curAttrIdx = $state(0);
 	let searchString = $state('');
 	let useRegExSearch = $state(false);

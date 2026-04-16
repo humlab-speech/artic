@@ -1,4 +1,4 @@
-@import 'artic-design';
+@use 'artic-design' as *;
 
 .artic-font-small {
     font-family: $font-small-family;

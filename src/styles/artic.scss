@@ -1,7 +1,7 @@
-@import 'artic-design';
-@import 'font';
-@import 'mixins';
-// @import 'material-design-icons/iconfont/material-icons';
+@use 'artic-design' as *;
+@use 'font' as *;
+@use 'mixins' as *;
+// @use 'material-design-icons/iconfont/material-icons' as *;
 // @use "@material/button/mdc-button";
 
 /**
@@ -111,7 +111,7 @@
     }
     .artic-dropdown-container:hover #demoDB {
         background-color: var(--bg-dropdown, var(--color-white));
-        color: var(--text-primary, var(--color-black));
+        color: var(--color-black);
     }
     #artic-dropdown-arrow:after {
         content: '\25B8';

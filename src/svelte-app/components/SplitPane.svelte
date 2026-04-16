@@ -51,8 +51,12 @@
 	</div>
 	<div class="split-handler"
 		onmousedown={onMouseDown}
-		role="separator"
-		aria-orientation="horizontal"
+		role="slider"
+		aria-orientation="vertical"
+		aria-valuenow={Math.round(splitRatio * 100)}
+		aria-valuemin={0}
+		aria-valuemax={100}
+		aria-label="Resize panels"
 		tabindex="0"
 	>
 		<span></span>
