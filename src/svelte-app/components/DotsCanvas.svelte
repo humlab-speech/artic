@@ -12,6 +12,8 @@
 	import { styles } from '../../core/util/styles';
 	import { getValueAtTime, mergeTrackPair, type TrackInfo } from '../utils/track-merge';
 
+	const CONTOUR_COLORS = ['#73A790','#2A4765','#D7B17C','#EABAB9','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
+
 	let staticCanvas: HTMLCanvasElement;
 	let dotsCanvas: HTMLCanvasElement;
 	let staticCtx: CanvasRenderingContext2D;
@@ -117,12 +119,14 @@
 		const ctx = staticCtx;
 		ctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 
+		ctx.lineWidth = 2;
 		for (let i = 0; i < dD.staticContours.length; i++) {
 			const sc = dD.staticContours[i];
 			const xTrack = buildTrackInfo(sc.xSsffTrack);
 			const yTrack = buildTrackInfo(sc.ySsffTrack);
 			if (!xTrack || !yTrack) continue;
 
+			const color = sc.color || CONTOUR_COLORS[i % CONTOUR_COLORS.length];
 			const merged = mergeTrackPair(xTrack, yTrack);
 			let xPrev: number | undefined;
 			let yPrev: number | undefined;
@@ -131,8 +135,8 @@
 				const x = ((merged.xValues[j][sc.xContourNr] - globalMinX) / (globalMaxX - globalMinX) * staticCanvas.width);
 				const y = staticCanvas.height - ((merged.yValues[j][sc.yContourNr] - globalMinY) / (globalMaxY - globalMinY) * staticCanvas.height);
 
-				ctx.strokeStyle = sc.color;
-				ctx.fillStyle = sc.color;
+				ctx.strokeStyle = color;
+				ctx.fillStyle = color;
 				ctx.beginPath();
 				ctx.arc(x, y, 2, startPoint, endPoint, true);
 				ctx.fill();
@@ -172,6 +176,8 @@
 		const scaleY = dotsCanvas.height / dotsCanvas.offsetHeight;
 
 		// Corner markers
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = CONTOUR_COLORS[0];
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
 		ctx.lineTo(5, 5);
@@ -211,6 +217,7 @@
 		// Draw dots using time-domain interpolation
 		const allDots: { name: string; x: number; y: number }[] = [];
 
+		ctx.lineWidth = 2;
 		for (let i = 0; i < dD.dots.length; i++) {
 			const dot = dD.dots[i];
 			const xTrack = buildTrackInfo(dot.xSsffTrack);
@@ -223,7 +230,9 @@
 			const x = ((xVal - globalMinX) / (globalMaxX - globalMinX) * dotsCanvas.width);
 			const y = dotsCanvas.height - ((yVal - globalMinY) / (globalMaxY - globalMinY) * dotsCanvas.height);
 
-			ctx.strokeStyle = dot.color;
+			const dotColor = dot.color || CONTOUR_COLORS[i % CONTOUR_COLORS.length];
+			ctx.strokeStyle = dotColor;
+			ctx.fillStyle = dotColor;
 			ctx.beginPath();
 			ctx.arc(x, y, 20, startPoint, endPoint, true);
 			ctx.stroke();
@@ -241,11 +250,11 @@
 
 		// Connect lines
 		if (dD.connectLines) {
-			dD.connectLines.forEach((c: any) => {
+			dD.connectLines.forEach((c: any, ci: number) => {
 				const f = allDots.find(d => d.name === c.fromDot);
 				const t = allDots.find(d => d.name === c.toDot);
 				if (!f || !t) return;
-				ctx.strokeStyle = c.color;
+				ctx.strokeStyle = c.color || CONTOUR_COLORS[ci % CONTOUR_COLORS.length];
 				ctx.beginPath();
 				ctx.moveTo(f.x, f.y);
 				ctx.lineTo(t.x, t.y);
@@ -256,12 +265,13 @@
 
 		// Static dots
 		if (dD.staticDots) {
-			dD.staticDots.forEach((sD: any) => {
-				ctx.strokeStyle = sD.color;
-				ctx.fillStyle = sD.color;
+			dD.staticDots.forEach((sD: any, si: number) => {
+				const sdColor = sD.color || CONTOUR_COLORS[si % CONTOUR_COLORS.length];
+				ctx.strokeStyle = sdColor;
+				ctx.fillStyle = sdColor;
 				const labelX = ((sD.xNameCoordinate - globalMinX) / (globalMaxX - globalMinX) * dotsCanvas.width);
 				const labelY = dotsCanvas.height - ((sD.yNameCoordinate - globalMinY) / (globalMaxY - globalMinY) * dotsCanvas.height);
-				fontScaleService.drawUndistortedText(ctx, sD.name, labelFontSize, styles.fontInputFamily, labelX, labelY, sD.color, true);
+				fontScaleService.drawUndistortedText(ctx, sD.name, labelFontSize, styles.fontInputFamily, labelX, labelY, sdColor, true);
 
 				sD.xCoordinates.forEach((xVal: number, xIdx: number) => {
 					const x = ((xVal - globalMinX) / (globalMaxX - globalMinX) * dotsCanvas.width);
