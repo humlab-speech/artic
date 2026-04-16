@@ -126,7 +126,7 @@
 						"xContourNr": 0,
 						"ySsffTrack": "tt_posz",
 						"yContourNr": 0,
-						"color": "rgb(255,0,0)"
+						"color": "#F0581A"
 					}, {
 						"name": "tm",
 						"xSsffTrack": "tm_posy",
@@ -209,21 +209,21 @@
 						"xContourNr": 0,
 						"ySsffTrack": "FORMANTS",
 						"yContourNr": 1,
-						"color": "rgb(255,0,0)"
+						"color": "#F0581A"
 					}, {
 						"name": "f2/f3",
 						"xSsffTrack": "FORMANTS",
 						"xContourNr": 1,
 						"ySsffTrack": "FORMANTS",
 						"yContourNr": 2,
-						"color": "rgb(255,0,0)"
+						"color": "#F0581A"
 					}, {
 						"name": "f3/f4",
 						"xSsffTrack": "FORMANTS",
 						"xContourNr": 2,
 						"ySsffTrack": "FORMANTS",
 						"yContourNr": 3,
-						"color": "rgb(255,0,0)"
+						"color": "#F0581A"
 					}],
 					"connectLines": [],
 					"staticDots": [{
@@ -233,7 +233,7 @@
 						"xCoordinates": [300, 300, 900, 900, 300],
 						"yCoordinates": [880, 2540, 2540, 880, 880],
 						"connect": true,
-						"color": "rgb(0,0,255)"
+						"color": "#73A790"
 					}]
 
 				}]
