@@ -124,8 +124,8 @@
 				ctx.fill();
 
 				// old value
-				ctx.strokeStyle = 'red';
-				ctx.fillStyle = 'red';
+				ctx.strokeStyle = styles.colorCursor;
+				ctx.fillStyle = styles.colorCursor;
 				ctx.beginPath();
 				ctx.arc(x, yOld - 1, 2, 0, 2 * Math.PI, false);
 				ctx.closePath();

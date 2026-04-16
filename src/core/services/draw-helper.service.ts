@@ -636,8 +636,8 @@ export class DrawHelperService{
 	 * on canvases where the mouse is currently not hovering over
 	 */
 	public drawCrossHairX(ctx, mouseX){
-		ctx.strokeStyle = styles.colorRed;
-		ctx.fillStyle = styles.colorRed;
+		ctx.strokeStyle = styles.colorCursor;
+		ctx.fillStyle = styles.colorCursor;
 		ctx.beginPath();
 		ctx.moveTo(mouseX, 0);
 		ctx.lineTo(mouseX, ctx.canvas.height);
@@ -653,8 +653,8 @@ export class DrawHelperService{
 		if (this.ConfigProviderService.vals.restrictions.drawCrossHairs) {
 			var fontSize = parseInt(styles.fontSmallSize.slice(0, -2));
 			// ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-			ctx.strokeStyle = styles.colorRed;
-			ctx.fillStyle = styles.colorRed;
+			ctx.strokeStyle = styles.colorCursor;
+			ctx.fillStyle = styles.colorCursor;
 
 			// see if Chrome -> dashed line
 			//if (navigator.vendor === 'Google Inc.') {
@@ -681,30 +681,30 @@ export class DrawHelperService{
 			if (max !== undefined || min !== undefined) {
 				if (trackname === 'OSCI') {
 					// no horizontal values
-					ctx.strokeStyle = styles.colorRed;
-					ctx.fillStyle = styles.colorRed;
+					ctx.strokeStyle = styles.colorCursor;
+					ctx.fillStyle = styles.colorCursor;
 					ctx.beginPath();
 					ctx.moveTo(mouseX, 0);
 					ctx.lineTo(mouseX, ctx.canvas.height);
 					ctx.stroke();
 				} else if (trackname === 'SPEC') {
 					this.FontScaleService.drawUndistortedText(
-						ctx, 
-						mouseFreq + unit, 
-						fontSize, 
-						styles.fontSmallFamily, 
-						5, 
-						y, 
-						styles.colorRed, 
+						ctx,
+						mouseFreq + unit,
+						fontSize,
+						styles.fontSmallFamily,
+						5,
+						y,
+						styles.colorCursor,
 						true);
 					this.FontScaleService.drawUndistortedText(
-						ctx, 
-						mouseFreq + unit, 
-						fontSize, 
-						styles.fontSmallFamily, 
-						ctx.canvas.width - tW, 
-						y, 
-						styles.colorRed, 
+						ctx,
+						mouseFreq + unit,
+						fontSize,
+						styles.fontSmallFamily,
+						ctx.canvas.width - tW,
+						y,
+						styles.colorCursor,
 						true);
 
 					ctx.beginPath();
@@ -721,22 +721,22 @@ export class DrawHelperService{
 					mouseFreq = max - (mouseY / ctx.canvas.height * (max - min));
 					mouseFreq = this.MathHelperService.roundToNdigitsAfterDecPoint(mouseFreq, 2); // crop
 					this.FontScaleService.drawUndistortedText(
-						ctx, 
-						mouseFreq + unit, 
-						fontSize, 
-						styles.fontSmallFamily, 
-						5, 
-						y, 
-						styles.colorTransparentRed, 
+						ctx,
+						mouseFreq + unit,
+						fontSize,
+						styles.fontSmallFamily,
+						5,
+						y,
+						styles.colorCursor,
 						true);
 					this.FontScaleService.drawUndistortedText(
-						ctx, 
-						mouseFreq + unit,  
-						fontSize, 
-						styles.fontSmallFamily, 
-						ctx.canvas.width - 5 - tW, 
-						y, 
-						styles.colorTransparentRed, 
+						ctx,
+						mouseFreq + unit,
+						fontSize,
+						styles.fontSmallFamily,
+						ctx.canvas.width - 5 - tW,
+						y,
+						styles.colorCursor,
 						true);
 					ctx.beginPath();
 					ctx.moveTo(0, mouseY);
@@ -750,14 +750,14 @@ export class DrawHelperService{
 				}
 			}
 			this.FontScaleService.drawUndistortedTextTwoLines(
-				ctx, 
-				s1, 
-				s2, 
-				fontSize, 
-				styles.fontSmallFamily, 
-				mouseX + 5, 
-				0, 
-				styles.colorTransparentRed, 
+				ctx,
+				s1,
+				s2,
+				fontSize,
+				styles.fontSmallFamily,
+				mouseX + 5,
+				0,
+				styles.colorCursor,
 				true);
 		}
 	};

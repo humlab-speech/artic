@@ -7,6 +7,7 @@ export const styles = {
 	colorWhite: '#F1EFE4',
 	colorBlue: '#0DC5FF',
 	colorRed: '#f00',
+	colorCursor: '#F0581A',
 	colorYellow: '#ff0',
 	colorGreen: '#eeff41',
 	colorGrey: '#424242',
