@@ -142,7 +142,6 @@
 						curSampleInColTime = (1 / sR * curSampleInCol) + sT;
 						x = (curSampleInColTime - startTimeVP) / (endTimeVP - startTimeVP) * canvas.width;
 						y = canvas.height - ((curArr[contourNr] - minVal) / (maxVal - minVal) * canvas.height);
-						ctx.arc(x, y - 1, 4.5, 0, 2 * Math.PI, false);
 						ctx.lineTo(x, y);
 					});
 
@@ -158,6 +157,17 @@
 					}
 
 					ctx.stroke();
+
+					// filled dots at each sample
+					curSampleArrs.forEach((curArr: number[], curArrIdx: number) => {
+						curSampleInCol = colStartSampleNr + curArrIdx;
+						curSampleInColTime = (1 / sR * curSampleInCol) + sT;
+						x = (curSampleInColTime - startTimeVP) / (endTimeVP - startTimeVP) * canvas.width;
+						y = canvas.height - ((curArr[contourNr] - minVal) / (maxVal - minVal) * canvas.height);
+						ctx.beginPath();
+						ctx.arc(x, y - 1, 3, 0, 2 * Math.PI, false);
+						ctx.fill();
+					});
 				}
 			});
 		} else {
