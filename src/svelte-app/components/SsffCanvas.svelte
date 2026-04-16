@@ -73,14 +73,14 @@
 		if (horizontalLines) {
 			horizontalLines.yValues.forEach((yVal: number) => {
 				ctx.beginPath();
-				ctx.lineWidth = 2 as any;
+				ctx.lineWidth = 2.4 as any;
 				ctx.strokeStyle = 'blue';
 				ctx.globalAlpha = 0.75;
 				const zeroY = canvas.height - ((yVal - minVal) / (maxVal - minVal) * canvas.height);
 				ctx.moveTo(0, zeroY);
 				ctx.lineTo(canvas.width, zeroY);
 				ctx.stroke();
-				ctx.lineWidth = 1 as any;
+				ctx.lineWidth = 1.2 as any;
 				ctx.globalAlpha = 1;
 			});
 		}
