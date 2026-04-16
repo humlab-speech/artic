@@ -11,7 +11,7 @@
 
 	let { trackName }: { trackName: string } = $props();
 
-	const CONTOUR_COLORS = ['#EABAB9','#73A790','#D7B17C','#2A4765','#F0581A','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
+	const CONTOUR_COLORS = ['#73A790','#2A4765','#D7B17C','#EABAB9','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -120,8 +120,8 @@
 						trackName === 'SPEC' &&
 						assignmentTrackName !== ''
 					) {
-						ctx.strokeStyle = styles.colorGreen;
-						ctx.fillStyle = styles.colorGreen;
+						ctx.strokeStyle = '#F0581A';
+						ctx.fillStyle = '#F0581A';
 					}
 
 					ctx.beginPath();

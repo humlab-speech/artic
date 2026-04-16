@@ -17,8 +17,7 @@
 	// Colors
 	const COLOR_WHITE = '#F1EFE4';
 	const COLOR_TRANSPARENT_RED = 'rgba(255, 0, 0, 0.3)';
-	const CONTOUR_COLORS = ['#EABAB9','#73A790','#D7B17C','#2A4765','#F0581A','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
-
+	const CONTOUR_COLORS = ['#73A790','#2A4765','#D7B17C','#EABAB9','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
 	let mainCanvas: HTMLCanvasElement;
 	let ssffCanvas: HTMLCanvasElement;
 	let markupCanvas: HTMLCanvasElement;
@@ -113,7 +112,7 @@
 				ctx.moveTo(0, zeroY);
 				ctx.lineTo(canvasW, zeroY);
 				ctx.stroke();
-				ctx.lineWidth = 1.2;
+				ctx.lineWidth = 3.0;
 				ctx.globalAlpha = 1;
 			});
 		}
@@ -134,8 +133,8 @@
 
 					// Highlight selected correction tool
 					if (viewStateService.curCorrectionToolNr - 1 === contourNr && trackName === 'SPEC' && assignmentTrackName !== '') {
-						ctx.strokeStyle = '#00ff00';
-						ctx.fillStyle = '#00ff00';
+						ctx.strokeStyle = '#F0581A';
+						ctx.fillStyle = '#F0581A';
 					}
 
 					ctx.beginPath();
