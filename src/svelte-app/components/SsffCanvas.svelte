@@ -73,14 +73,14 @@
 		if (horizontalLines) {
 			horizontalLines.yValues.forEach((yVal: number) => {
 				ctx.beginPath();
-				ctx.lineWidth = 4.8 as any;
+				ctx.lineWidth = 9.6 as any;
 				ctx.strokeStyle = 'blue';
 				ctx.globalAlpha = 0.75;
 				const zeroY = canvas.height - ((yVal - minVal) / (maxVal - minVal) * canvas.height);
 				ctx.moveTo(0, zeroY);
 				ctx.lineTo(canvas.width, zeroY);
 				ctx.stroke();
-				ctx.lineWidth = 2.4 as any;
+				ctx.lineWidth = 4.8 as any;
 				ctx.globalAlpha = 1;
 			});
 		}
@@ -142,7 +142,7 @@
 						curSampleInColTime = (1 / sR * curSampleInCol) + sT;
 						x = (curSampleInColTime - startTimeVP) / (endTimeVP - startTimeVP) * canvas.width;
 						y = canvas.height - ((curArr[contourNr] - minVal) / (maxVal - minVal) * canvas.height);
-						ctx.arc(x, y - 1, 3, 0, 2 * Math.PI, false);
+						ctx.arc(x, y - 1, 4.5, 0, 2 * Math.PI, false);
 						ctx.lineTo(x, y);
 					});
 
