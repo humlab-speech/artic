@@ -25,8 +25,8 @@
 	let globalMaxY = -Infinity;
 	const startPoint = 0;
 	const endPoint = (Math.PI / 180) * 360;
-	const smallFontSize = parseInt(styles.fontInputSize.slice(0, -2)) * 3 / 4;
-	const labelFontSize = parseInt(styles.fontInputSize.slice(0, -2)) - 4;
+	const smallFontSize = parseInt(styles.fontInputSize.slice(0, -2)) * 9 / 8;
+	const labelFontSize = (parseInt(styles.fontInputSize.slice(0, -2)) - 4) * 3 / 2;
 
 	function syncCanvasSize(c: HTMLCanvasElement) {
 		if (!c) return;
