@@ -11,7 +11,7 @@
 
 	let { trackName }: { trackName: string } = $props();
 
-	const CONTOUR_COLORS = ['#73A790','#2A4765','#D7B17C','#EABAB9','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
+	const CONTOUR_COLORS = ['#EABAB9','#D7B17C','#C9918A','#9C7A8C','#B87D5E','#8B8FAE','#73A790','#C4D4C0'];
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -124,6 +124,7 @@
 						ctx.fillStyle = '#F0581A';
 					}
 
+					ctx.lineWidth = 1.5;
 					ctx.beginPath();
 
 					// first line from sample not in view (left)

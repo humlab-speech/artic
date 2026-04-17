@@ -50,6 +50,12 @@
 		}
 	}
 
+	function previewTimeAnchor(ta) {
+		viewStateService.curViewPort.selectS = ta.sample_start;
+		viewStateService.curViewPort.selectE = ta.sample_end;
+		viewStateService.setViewPort(ta.sample_start, ta.sample_end);
+	}
+
 	function saveTimeAnchors() {
 		loadedMetaDataService.setTimeAnchors(resultTimeAnchors);
 		standardFuncsService.traverseAndClean(dataService.getData());
@@ -97,7 +103,7 @@
 				<table class="artic-modalTable"><tbody>
 					<tr><td>search string</td><td>sample_start</td><td>sample_end</td></tr>
 					{#each resultTimeAnchors as ta}
-						<tr><td>{ta.label}</td><td>{ta.sample_start}</td><td>{ta.sample_end}</td></tr>
+						<tr onclick={() => previewTimeAnchor(ta)} style="cursor:pointer" title="Click to preview in timeline"><td>{ta.label}</td><td>{ta.sample_start}</td><td>{ta.sample_end}</td></tr>
 					{/each}
 				</tbody></table>
 			{/if}

@@ -121,6 +121,15 @@
 			if (event.status === undefined) {
 				const tmp = new Uint8ClampedArray(event.img);
 				imageData.data.set(tmp);
+				if (viewStateService.spectroSettings?.invert && !viewStateService.spectroSettings?.drawHeatMapColors) {
+					const d = imageData.data;
+					for (let i = 0; i < d.length; i += 4) {
+						d[i]     = 255 - d[i];
+						d[i + 1] = 255 - d[i + 1];
+						d[i + 2] = 255 - d[i + 2];
+						// alpha (d[i+3]) unchanged
+					}
+				}
 				ctx.putImageData(imageData, 0, 0);
 			} else {
 				console.error('Error rendering spectrogram:', event.status.message);
@@ -144,7 +153,10 @@
 			'audioBufferChannels': soundHandlerService.audioBuffer.numberOfChannels,
 			'drawHeatMapColors': viewStateService.spectroSettings.drawHeatMapColors,
 			'preEmphasisFilterFactor': viewStateService.spectroSettings.preEmphasisFilterFactor,
-			'heatMapColorAnchors': viewStateService.spectroSettings.heatMapColorAnchors,
+			// When heatmap + invert: reverse anchor order (gradient direction flip) instead of RGB inversion
+			'heatMapColorAnchors': (viewStateService.spectroSettings.invert && viewStateService.spectroSettings.drawHeatMapColors)
+				? [viewStateService.spectroSettings.heatMapColorAnchors[2], viewStateService.spectroSettings.heatMapColorAnchors[1], viewStateService.spectroSettings.heatMapColorAnchors[0]]
+				: viewStateService.spectroSettings.heatMapColorAnchors,
 			'invert': viewStateService.spectroSettings.invert,
 		}, [paddedSamples.buffer]);
 	}

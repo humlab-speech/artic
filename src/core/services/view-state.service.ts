@@ -49,7 +49,7 @@ export class ViewStateService{
 	private url: any;
 	private pageSize: any;
 	private currentPage: any;
-	private curTimeAnchorIdx: any;
+	public curTimeAnchorIdx: any;
 	public largeTextFieldInputFieldVisable: any;
 	public largeTextFieldInputFieldCurLabel: any;
 	private states: any;
@@ -284,6 +284,19 @@ export class ViewStateService{
 		this.curViewPort.selectE = -1;
 	};
 
+	public navigateTimeAnchor(direction: 1 | -1, timeAnchors: Array<{sample_start: number, sample_end: number}>) {
+		if (!timeAnchors || timeAnchors.length === 0) return;
+		this.curTimeAnchorIdx = Math.max(0, Math.min(
+			timeAnchors.length - 1,
+			this.curTimeAnchorIdx + direction
+		));
+		const anchor = timeAnchors[this.curTimeAnchorIdx];
+		this.curViewPort.selectS = anchor.sample_start;
+		this.curViewPort.selectE = anchor.sample_end;
+		this.setViewPort(anchor.sample_start, anchor.sample_end);
+		scheduleUpdate();
+	};
+
 	public getViewPort() { return this.curViewPort; };
 
 	public setspectroSettings(len, rfrom, rto, dyn, win, hm, preEmph, hmColorAnchors, invert) {
@@ -294,11 +307,15 @@ export class ViewStateService{
 		this.setWindowFunction(win);
 		this.spectroSettings.drawHeatMapColors = hm;
 		this.spectroSettings.preEmphasisFilterFactor = preEmph;
-		this.spectroSettings.heatMapColorAnchors = hmColorAnchors;
+		// Deep-copy to strip Svelte 5 reactive Proxy wrappers (Proxy not structured-clone-able)
+		if (hmColorAnchors !== undefined) {
+			this.spectroSettings.heatMapColorAnchors = JSON.parse(JSON.stringify(hmColorAnchors));
+		}
 		this.spectroSettings.invert = invert;
+		scheduleUpdate();
 	};
 
-	public setOsciSettings(curCh) { this.osciSettings.curChannel = curCh; };
+	public setOsciSettings(curCh) { this.osciSettings.curChannel = curCh; scheduleUpdate(); };
 	public setHierarchySettings(curPath) { this.hierarchyState.path = curPath; }
 
 	public getSelect() { return [this.curViewPort.selectS, this.curViewPort.selectE]; };

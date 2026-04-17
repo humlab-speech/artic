@@ -41,6 +41,24 @@
 		return loadedMetaDataService.getCurBndl();
 	});
 
+	let timeAnchors = $derived.by(() => {
+		getDataTick();
+		return curBndl?.timeAnchors ?? [];
+	});
+
+	let curAnchorIdx = $derived.by(() => {
+		getDataTick();
+		return viewStateService.curTimeAnchorIdx ?? -1;
+	});
+
+	function prevAnchor() {
+		viewStateService.navigateTimeAnchor(-1, timeAnchors);
+	}
+
+	function nextAnchor() {
+		viewStateService.navigateTimeAnchor(1, timeAnchors);
+	}
+
 	let hasUnsavedChanges = $derived(getDataTick() >= 0 && historyService.movesAwayFromLastSave !== 0);
 
 	function loadBundle(bndl: any) {
@@ -125,6 +143,13 @@
 				/>
 			</div>
 		</div>
+		{#if timeAnchors.length > 0}
+			<div style="display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; font-size: 12px; border-bottom: 1px solid #ccc;">
+				<button class="artic-mini-btn" onclick={prevAnchor} disabled={curAnchorIdx <= 0} title="Previous anchor">&#9664;</button>
+				<span>Anchor {Math.max(0, curAnchorIdx + 1)}/{timeAnchors.length}</span>
+				<button class="artic-mini-btn" onclick={nextAnchor} disabled={curAnchorIdx >= timeAnchors.length - 1} title="Next anchor">&#9654;</button>
+			</div>
+		{/if}
 		{#if showDropZone}
 			<input
 				bind:this={fileInput}

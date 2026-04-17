@@ -443,12 +443,7 @@ SpectroDrawingWorker.prototype = {
 						var y2 = y0 + (y1 - y0) / x1 * b;
 
 						// calculate corresponding color value for interpolation point [0...255]
-						// console.log(global.invert);
-						if (global.invert){
-							rgb = Math.round(255 * y2);
-						} else {
-							rgb = 255 - Math.round(255 * y2);
-						}
+						rgb = 255 - Math.round(255 * y2);
 
 						// set internal image buffer to calculated & interpolated value
 						px = Math.floor(xIdx);
@@ -484,10 +479,18 @@ SpectroDrawingWorker.prototype = {
 					py = Math.floor(global.imgHeight - (global.pixelHeight * (i - 2)));
 
 					index = (px + (py * global.imgWidth)) * 4;
-					global.resultImgArr[index + 0] = Math.round(global.spectroWhite[0] * rgb / 255);
-					global.resultImgArr[index + 1] = Math.round(global.spectroWhite[1] * rgb / 255);
-					global.resultImgArr[index + 2] = Math.round(global.spectroWhite[2] * rgb / 255);
-					global.resultImgArr[index + 3] = global.transparency;
+					if (global.drawHeatMapColors) {
+						var hmVals = global.convertToHeatmap(0, 255, rgb, global.heatMapColorAnchors);
+						global.resultImgArr[index + 0] = hmVals.r;
+						global.resultImgArr[index + 1] = hmVals.g;
+						global.resultImgArr[index + 2] = hmVals.b;
+						global.resultImgArr[index + 3] = global.transparency;
+					} else {
+						global.resultImgArr[index + 0] = Math.round(global.spectroWhite[0] * rgb / 255);
+						global.resultImgArr[index + 1] = Math.round(global.spectroWhite[1] * rgb / 255);
+						global.resultImgArr[index + 2] = Math.round(global.spectroWhite[2] * rgb / 255);
+						global.resultImgArr[index + 3] = global.transparency;
+					}
 				}
 			}
 		};
