@@ -62,7 +62,7 @@
 
 	let viewportSyncLabel = $derived.by(() => {
 		getConfigTick();
-		return viewStateService.hierarchyState.viewportSync ? 'synced to zoom' : 'show all';
+		return viewStateService.hierarchyState.viewportSync ? 'show all' : 'sync with zoom';
 	});
 
 	function setCurrentAttrDef(levelName: string, attrName: string, index: number) {
