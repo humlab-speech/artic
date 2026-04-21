@@ -48,6 +48,7 @@
             left: 5px;
             width: calc(100% - 10px) !important;
             z-index: 2;
+            pointer-events: none;
             // border: 1px solid $color-grey;
         }
         .artic-timelineCanvasMarkup {
@@ -55,8 +56,9 @@
             top: 0px; 
             left: 5px;
             background-color: transparent;
-            z-index: 2; 
+            z-index: 3; 
             width: calc(100% - 10px) !important;   
+            pointer-events: auto;
             // border: 1px solid $color-grey;
         }
     }

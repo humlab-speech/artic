@@ -215,6 +215,38 @@ describe('Factory: ViewStateService', function () {
     expect(range.end).toEqual(9669);
   }));
 
+  it('should preserve zero offsetX in getX', angular.mock.inject(function (ViewStateService) {
+    var target = {
+      width: 200,
+      clientWidth: 100,
+      getBoundingClientRect: function () { return { left: 25 }; }
+    };
+    var event = {
+      offsetX: 0,
+      layerX: 17,
+      clientX: 75,
+      target: target
+    };
+
+    expect(ViewStateService.getX(event)).toEqual(0);
+  }));
+
+  it('should preserve zero offsetY in getY', angular.mock.inject(function (ViewStateService) {
+    var target = {
+      height: 160,
+      clientHeight: 80,
+      getBoundingClientRect: function () { return { top: 10 }; }
+    };
+    var event = {
+      offsetY: 0,
+      layerY: 13,
+      clientY: 40,
+      target: target
+    };
+
+    expect(ViewStateService.getY(event)).toEqual(0);
+  }));
+
   /**
    *
    */

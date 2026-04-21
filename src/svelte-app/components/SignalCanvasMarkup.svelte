@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { getViewportTick, getMarkupTick, invalidate, invalidateMarkup } from '../stores/app-state.svelte';
 	import {
 		viewStateService,
@@ -10,6 +10,7 @@
 		soundHandlerService,
 	} from '../stores/services';
 	import { styles } from '../../core/util/styles';
+	import { getCanvasX, getCanvasY, hasAudioBuffer } from '../utils/canvas-interaction';
 
 	let { trackName }: { trackName: string } = $props();
 
@@ -26,8 +27,9 @@
 	}
 
 	function setSelectDrag(event: MouseEvent | TouchEvent) {
+		const mouseX = getCanvasX(event);
 		const curMouseSample = Math.round(
-			viewStateService.getX(event) * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
+			mouseX * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
 		);
 		if (curMouseSample > viewStateService.curViewPort.movingS) {
 			viewStateService.curViewPort.movingE = curMouseSample;
@@ -150,8 +152,9 @@
 
 	function onMouseDown(event: MouseEvent) {
 		if (!event.shiftKey) {
+			const mouseX = getCanvasX(event);
 			viewStateService.curViewPort.movingS = Math.round(
-				viewStateService.getX(event) * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
+				mouseX * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
 			);
 			viewStateService.curViewPort.movingE = viewStateService.curViewPort.movingS;
 			viewStateService.select(viewStateService.curViewPort.movingS, viewStateService.curViewPort.movingE);
@@ -161,8 +164,9 @@
 
 	function onMouseUp(event: MouseEvent) {
 		if (event.shiftKey) {
+			const mouseX = getCanvasX(event);
 			const curSample = Math.round(
-				viewStateService.getX(event) * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
+				mouseX * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
 			);
 			const selectDist = viewStateService.curViewPort.selectE - viewStateService.curViewPort.selectS;
 			if (curSample <= viewStateService.curViewPort.selectS + selectDist / 2) {
@@ -197,9 +201,9 @@
 			mbutton = event.buttons;
 		}
 
-		const mouseX = viewStateService.getX(event);
+		const mouseX = getCanvasX(event);
 		viewStateService.curMouseX = mouseX;
-		curMouseY = viewStateService.getY(event);
+		curMouseY = getCanvasY(event);
 		viewStateService.curMouseY = curMouseY;
 		viewStateService.curMouseTrackName = trackName;
 		viewStateService.curMousePosSample = Math.round(
@@ -236,7 +240,7 @@
 									);
 									const nrOfSamples = colEndSampleNr - colStartSampleNr + 1;
 									const curSampleArrs = col.values.slice(colStartSampleNr, colStartSampleNr + nrOfSamples);
-									const curMouseTime = startTimeVP + (viewStateService.getX(event) / (event.target as HTMLCanvasElement).width) * (endTimeVP - startTimeVP);
+									const curMouseTime = startTimeVP + (mouseX / canvas.width) * (endTimeVP - startTimeVP);
 									const curMouseSample = Math.round((curMouseTime - sRaSt.startTime) * sRaSt.sampleRate);
 
 									if (curMouseSample - colStartSampleNr < 0 || curMouseSample - colStartSampleNr >= curSampleArrs.length) {
@@ -248,7 +252,7 @@
 										const oldValue = curSampleArrs[viewStateService.curPreselColumnSample][viewStateService.curCorrectionToolNr - 1];
 										const newValue =
 											viewStateService.spectroSettings.rangeTo -
-											viewStateService.getY(event) / (event.target as HTMLCanvasElement).height * viewStateService.spectroSettings.rangeTo;
+											curMouseY / canvas.height * viewStateService.spectroSettings.rangeTo;
 
 										curSampleArrs[viewStateService.curPreselColumnSample][viewStateService.curCorrectionToolNr - 1] = newValue;
 										historyService.updateCurChangeObj({
@@ -286,14 +290,10 @@
 
 	function onMouseLeave(_event: MouseEvent) {
 		drawCrossHairs = false;
-		if (!isEmptyObj(soundHandlerService)) {
-			if (!isEmptyObj(soundHandlerService.audioBuffer)) {
-				if (!viewStateService.getdragBarActive()) {
-					if (viewStateService.getPermission('labelAction')) {
-						drawMarkup();
-						viewStateService.curMouseTrackName = undefined;
-					}
-				}
+		if (hasAudioBuffer(soundHandlerService.audioBuffer) && !viewStateService.getdragBarActive()) {
+			if (viewStateService.getPermission('labelAction')) {
+				drawMarkup();
+				viewStateService.curMouseTrackName = undefined;
 			}
 		}
 	}
@@ -302,8 +302,9 @@
 
 	function onTouchStart(event: TouchEvent) {
 		event.preventDefault();
+		const mouseX = getCanvasX(event);
 		viewStateService.curViewPort.movingS = Math.round(
-			viewStateService.getX(event) * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
+			mouseX * viewStateService.getSamplesPerPixelVal(event) + viewStateService.curViewPort.sS
 		);
 		viewStateService.curViewPort.movingE = viewStateService.curViewPort.movingS;
 		viewStateService.select(viewStateService.curViewPort.movingS, viewStateService.curViewPort.movingE);
@@ -312,9 +313,9 @@
 
 	function onTouchMove(event: TouchEvent) {
 		event.preventDefault();
-		const mouseX = viewStateService.getX(event);
+		const mouseX = getCanvasX(event);
 		viewStateService.curMouseX = mouseX;
-		curMouseY = viewStateService.getY(event);
+		curMouseY = getCanvasY(event);
 		viewStateService.curMouseY = curMouseY;
 		viewStateService.curMouseTrackName = trackName;
 		viewStateService.curMousePosSample = Math.round(
@@ -360,7 +361,7 @@
 	$effect(() => {
 		getViewportTick();
 		getMarkupTick();
-		if (ctx && !isEmptyObj(soundHandlerService.audioBuffer)) {
+		if (ctx && hasAudioBuffer(soundHandlerService.audioBuffer)) {
 			syncCanvasSize();
 			drawMarkup();
 		}
@@ -378,4 +379,3 @@
 	ontouchmove={onTouchMove}
 	ontouchend={onTouchEnd}
 ></canvas>
-
