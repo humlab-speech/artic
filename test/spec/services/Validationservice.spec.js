@@ -180,6 +180,34 @@ describe('Service: ValidationService', function () {
   }));
 
   /**
+   * generator/from/index provenance keys must validate — added for
+   * reindeer's quantify() unification (2026-09-24 design doc).
+   */
+  it('should validateJSO for an ssffTrack with a generator block', angular.mock.inject(function (ValidationService) {
+    var tmpDBconfig = angular.copy(aeDbConfig);
+    tmpDBconfig.ssffTrackDefinitions.push({
+      name: 'F1',
+      columnName: 'F[Hz]',
+      fileExtension: 'fms',
+      from: 'F[Hz]',
+      index: 1,
+      generator: {
+        function: 'trk_formant_forest',
+        package: 'superassp',
+        version: '3.1.0',
+        args: { windowSize: 20 },
+        generatedAt: '2026-09-24T10:00:00+0000'
+      }
+    });
+    spyOn(ValidationService, 'getSchema').mockReturnValue({
+      name: 'testDBconfigTrackSchema',
+      data: DBconfigFileSchema
+    });
+    var res = ValidationService.validateJSO('testDBconfigTrackSchema', tmpDBconfig);
+    expect(res).toEqual(true);
+  }));
+
+  /**
    * Test validateJSO returns tv4 error object when schema validation fails
    */
   it('should return tv4 error when schema validation fails against a real schema', angular.mock.inject(function (ValidationService) {

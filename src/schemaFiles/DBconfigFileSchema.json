@@ -31,6 +31,22 @@
 					"producer": {
 						"type": "string"
 					},
+					"from": {
+						"type": "string"
+					},
+					"index": {
+						"type": "integer"
+					},
+					"generator": {
+						"type": "object",
+						"properties": {
+							"function": { "type": "string" },
+							"package": { "type": ["string", "null"] },
+							"version": { "type": ["string", "null"] },
+							"args": { "type": "object" },
+							"generatedAt": { "type": "string" }
+						}
+					},
 					"defaults": {
 						"type": "array",
 						"items": {
