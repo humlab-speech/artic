@@ -1,6 +1,6 @@
 {
   "name": "artic",
-  "version": "1.5.3-humlab-1.9.1",
+  "version": "1.5.3-humlab-1.10.0",
   "description": "Artic is an online and offline Web-App for labeling, visualizing and correcting speech and derived speech data.",
   "main": "app/scripts/app.js",
   "contributors": [
@@ -71,6 +71,7 @@
     "start": "npm run dev",
     "dev": "vite",
     "build:svelte": "vite build",
+    "build": "npm run build:svelte && node scripts/emit-manifest.mjs",
     "preview": "vite preview",
     "start:iframe-demo": "http-server iframe-demo --cors -p 7283 -c-1",
     "build-docker-image": "docker build --no-cache -t visp-artic ../",

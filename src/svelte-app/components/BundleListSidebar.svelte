@@ -52,23 +52,46 @@
 	});
 
 	function prevAnchor() {
+		if (curAnchorIdx <= 0) {
+			goToAdjacentBundle(-1, true);
+			return;
+		}
 		viewStateService.navigateTimeAnchor(-1, timeAnchors);
 	}
 
 	function nextAnchor() {
+		if (curAnchorIdx >= timeAnchors.length - 1) {
+			goToAdjacentBundle(1, false);
+			return;
+		}
 		viewStateService.navigateTimeAnchor(1, timeAnchors);
+	}
+
+	// Step to the neighbouring bundle in the playlist and land on its first
+	// (or, going backwards, last) time anchor, so a review playlist plays
+	// through without manual bundle clicks.
+	function goToAdjacentBundle(offset: number, atEnd: boolean) {
+		const list = loadedMetaDataService.getBundleList();
+		const i = list.indexOf(curBndl);
+		const target = i >= 0 ? list[i + offset] : undefined;
+		if (!target) return;
+		Promise.resolve(loadBundle(target)).then(() => {
+			const anchors = loadedMetaDataService.getCurBndl()?.timeAnchors ?? [];
+			if (anchors.length === 0) return;
+			viewStateService.curTimeAnchorIdx = atEnd ? anchors.length - 1 : 0;
+			viewStateService.navigateTimeAnchor(0, anchors);
+		});
 	}
 
 	let hasUnsavedChanges = $derived(getDataTick() >= 0 && historyService.movesAwayFromLastSave !== 0);
 
 	function loadBundle(bndl: any) {
 		if (historyService.movesAwayFromLastSave !== 0) {
-			modalService.open('views/confirmModal.html', 'You have unsaved changes. Load new bundle anyway?').then((res: any) => {
-				if (res) dbObjLoadSaveService.loadBundle(bndl);
+			return modalService.open('views/confirmModal.html', 'You have unsaved changes. Load new bundle anyway?').then((res: any) => {
+				if (res) return dbObjLoadSaveService.loadBundle(bndl);
 			});
-		} else {
-			dbObjLoadSaveService.loadBundle(bndl);
 		}
+		return dbObjLoadSaveService.loadBundle(bndl);
 	}
 
 	function toggleSession(session: string) {

@@ -40,6 +40,27 @@ The app decodes audio natively in the browser. WAV files use the original header
 
 *Safari 16.4+. Note: MP3 decoding may add small silence padding (~50ms) due to encoder delay — this is a browser limitation.
 
+## Prebuilt distributions
+
+`npm run build` writes `dist/` **and** `dist/artic-manifest.json` (version,
+git sha, protocol, features). The manifest lets consumers pin a build and
+feature-gate behaviour without parsing bundled JavaScript.
+
+Two consumers exist, and neither is required for standalone use:
+
+- **Standalone**: `dist/` is a self-contained static site (`npm run preview`,
+  any static host, or the demo databases left in `dist/demoDBs/`). Release
+  tarballs should ship the full build.
+- **reindeer** (`annotate()`/`review()`): consumes a trimmed build
+  (`demoDBs/` excluded — the demo button is disabled once connected over the
+  WebSocket protocol). `tools/sync-artic-dist.R` in the reindeer repository
+  vendors a pinned copy into `inst/artic/dist`; reindeer also verifies the
+  manifest features (`bundleList`, `timeAnchors`) before serving a review
+  playlist.
+
+When changing the protocol or the bundle-list/time-anchor contract, bump the
+`features` list in `scripts/emit-manifest.mjs` accordingly.
+
 ## Tests
 * `npm test` — unit tests via Jest (262 tests)
 * `npm run test:jest` — Jest tests only
