@@ -79,3 +79,4 @@ dist/
 test/playwright/__captures__/
 test-results/
 playwright-report/
+.gstack/

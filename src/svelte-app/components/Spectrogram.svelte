@@ -35,6 +35,7 @@
 	}
 
 	let renderJobId = 0;
+	let mismatchRetries = 0;
 
 	function showRenderingOverlay() {
 		ctx.fillStyle = cs().color.bg;
@@ -121,6 +122,14 @@
 			if (currentJob !== renderJobId) return; // stale result
 			if (event.status === undefined) {
 				const tmp = new Uint8ClampedArray(event.img);
+				// Worker drops jobs while busy, so a newer job (current canvas size) may never run and
+				// this result is from an earlier size. Worker is idle now: render again at current size.
+				if (tmp.length !== imageData.data.length) {
+					console.warn('[artic] spectrogram size mismatch', tmp.length, imageData.data.length, 'retry', mismatchRetries);
+					if (mismatchRetries++ < 2) redraw(); // bounded: never loop if the sizes never agree
+					return;
+				}
+				mismatchRetries = 0;
 				imageData.data.set(tmp);
 				if (effectiveInvert() && !viewStateService.spectroSettings?.drawHeatMapColors) {
 					const d = imageData.data;

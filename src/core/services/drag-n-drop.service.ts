@@ -1,4 +1,5 @@
 import { t } from '../util/i18n';
+import { scheduleUpdate } from '../util/schedule-update';
 export class DragnDropService{
 	private ModalService: any;
 	private DataService: any;
@@ -33,8 +34,9 @@ export class DragnDropService{
 		ConfigProviderService: any; DragnDropDataService: any; IoHandlerService: any;
 		ViewStateService: any; SoundHandlerService: any; BinaryDataManipHelperService: any;
 		BrowserDetectorService: any; WavParserService: any; TextGridParserService: any;
-		LoadedMetaDataService: any; LevelService: any;
+		LoadedMetaDataService: any; LevelService: any; DataSourceService?: any;
 	}) {
+		this.DataSourceService = deps.DataSourceService;
 		this.ModalService = deps.ModalService;
 		this.DataService = deps.DataService;
 		this.ValidationService = deps.ValidationService;
@@ -270,9 +272,11 @@ export class DragnDropService{
 				}
 			}
 			this.ViewStateService.somethingInProgress = false;
+			scheduleUpdate();
 		}).catch((err) => {
 			console.error('Error loading standalone config:', err);
 			this.ViewStateService.somethingInProgress = false;
+			scheduleUpdate();
 			this.ModalService.open('views/error.html', t('msg.configLoad') + (err.message || err));
 		});
 	};

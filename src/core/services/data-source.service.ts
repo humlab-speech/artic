@@ -2,6 +2,8 @@
  * Provenance of the loaded data (where it came from) and the UI capabilities
  * derived from it. comMode keeps meaning transport; this means provenance.
  */
+import { scheduleUpdate } from '../util/schedule-update';
+
 export type DataSource = 'none' | 'local' | 'demo' | 'server' | 'url';
 
 export interface Capabilities {
@@ -20,7 +22,7 @@ export class DataSourceService {
 
 	initDeps(deps: { ConfigProviderService: any }) { Object.assign(this, deps); }
 
-	set(source: DataSource) { this.source = source; }
+	set(source: DataSource) { this.source = source; scheduleUpdate(); }
 
 	get capabilities(): Capabilities {
 		const s = this.source;
