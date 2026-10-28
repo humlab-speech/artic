@@ -27,7 +27,6 @@ test('theme and language menus work from the header', async ({ page }) => {
 	await page.emulateMedia({ colorScheme: 'light' });
 	await page.goto('/');
 	await page.click('#themeMenuBtn');
-	await page.click('#theme-dark');
 	expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
 	await page.click('#languageMenuBtn');
 	await page.click('#lang-sv');

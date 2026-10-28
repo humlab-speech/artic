@@ -37,13 +37,13 @@ for (const scheme of ['light', 'dark'] as Scheme[]) {
 test.describe('keyboard', () => {
 	test('menus open with Enter, close with Escape and return focus', async ({ page }) => {
 		await openStart(page, 'light');
-		await page.focus('#themeMenuBtn');
+		await page.focus('#languageMenuBtn');
 		await page.keyboard.press('Enter');
 		await expect(page.locator('[role=menu]')).toBeVisible();
 		await page.keyboard.press('ArrowDown');
 		await page.keyboard.press('Escape');
 		await expect(page.locator('[role=menu]')).toHaveCount(0);
-		expect(await page.evaluate(() => document.activeElement?.id)).toBe('themeMenuBtn');
+		expect(await page.evaluate(() => document.activeElement?.id)).toBe('languageMenuBtn');
 	});
 
 	test('dialogs trap focus, close with Escape and restore focus', async ({ page }) => {

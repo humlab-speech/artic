@@ -1,24 +1,18 @@
 <script lang="ts">
-	import { themeService, type ThemePreference } from '../../../core/services/theme.service';
-	import { themePreference } from '../../stores/theme.svelte';
+	import { themeService } from '../../../core/services/theme.service';
+	import { currentTheme } from '../../stores/theme.svelte';
 	import { tr } from '../../stores/i18n.svelte';
-	import Menu from '../ui/Menu.svelte';
+	import Button from '../ui/Button.svelte';
 	import { icons } from '../ui/icons';
 
-	const options: { pref: ThemePreference; key: string }[] = [
-		{ pref: 'system', key: 'menu.themeSystem' },
-		{ pref: 'light', key: 'menu.themeLight' },
-		{ pref: 'dark', key: 'menu.themeDark' },
-	];
-
-	let items = $derived(
-		options.map((o) => ({
-			id: `theme-${o.pref}`,
-			label: tr(o.key),
-			checked: themePreference() === o.pref,
-			onselect: () => themeService.setPreference(o.pref),
-		})),
-	);
+	let dark = $derived(currentTheme() === 'dark');
 </script>
 
-<Menu label={tr('menu.theme')} icon={icons.themeMenu} iconOnly radio align="right" triggerId="themeMenuBtn" {items} />
+<Button
+	id="themeMenuBtn"
+	iconOnly
+	icon={icons.themeMenu}
+	label={tr('menu.theme')}
+	aria-pressed={dark}
+	onclick={() => themeService.setPreference(dark ? 'light' : 'dark')}
+/>

@@ -114,15 +114,16 @@
 	.sb-count { color: var(--sb-text-muted); font-size: var(--sb-size-sm); white-space: nowrap; }
 }
 .sb-logo {
-	display: inline-flex; align-items: center; gap: var(--sb-space-3);
+	display: inline-flex; flex-direction: column; align-items: flex-start; gap: 0.1rem;
 	background: transparent; border: 0; padding: 0; color: var(--sb-text); cursor: pointer; text-align: left;
 	&:disabled { cursor: default; }
-	.sb-logo-symbol { height: 2.4rem; width: 2.4rem; color: var(--sb-brand); }
-	.sb-logo-words { display: flex; flex-direction: column; line-height: 1.05; }
-	.sb-logo-name { font-family: var(--sb-font-ui); font-weight: var(--sb-weight-light); font-size: var(--sb-size-xl); }
-	.sb-logo-tagline { font-family: var(--sb-font-ui); font-weight: var(--sb-weight-medium); font-size: 0.8rem; color: var(--sb-text-muted); }
-	&.sb-logo-hero .sb-logo-symbol { height: 5rem; width: 5rem; }
-	&.sb-logo-hero .sb-logo-name { font-size: 3rem; }
+	.sb-logo-top { display: inline-flex; align-items: center; gap: var(--sb-space-2); line-height: 1; }
+	.sb-logo-symbol { height: 1.9rem; width: 1.9rem; color: var(--sb-brand); }
+	.sb-logo-name { font-family: var(--sb-font-ui); font-weight: var(--sb-weight-light); font-size: 2rem; }
+	.sb-logo-tagline { font-family: var(--sb-font-ui); font-weight: var(--sb-weight-semibold); font-size: 0.8rem; color: var(--sb-text); }
+	&.sb-logo-hero .sb-logo-symbol { height: 3.5rem; width: 3.5rem; }
+	&.sb-logo-hero .sb-logo-name { font-size: 3.5rem; }
+	&.sb-logo-hero .sb-logo-tagline { font-size: 1rem; }
 }
 .sb-user {
 	display: inline-flex; align-items: center; gap: var(--sb-space-2); padding: 0 var(--sb-space-3);
