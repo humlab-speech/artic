@@ -13,7 +13,7 @@ to be managed as efficiently as possible by the application.
 
 ## Quick start
 
-Visit the demo and click the `open demo DB` button in the top menu to load one of the three small example databases.
+Visit the demo and use **Open demo** on the start screen to load one of the small example databases, or drop your own audio files (optionally with `.TextGrid` or annotJSON files) onto the start screen to work in local mode.
 
 ## Development
 
@@ -24,6 +24,27 @@ Visit the demo and click the `open demo DB` button in the top menu to load one o
 * example WebSocket server: `cd exampleServers && node nodeEmuProtocolWsServer.js`
 * auto-connecting dev: `http://localhost:9000/?autoConnect=true`
 * GET-param dev (no WebSocket): `http://localhost:9000/?audioGetUrl=http:%2F%2Flocalhost:9000%2FdemoDBs%2Fae%2Fmsajc003.wav&labelGetUrl=http:%2F%2Flocalhost:9000%2FdemoDBs%2Fae%2Fmsajc003_annot.json&labelType=annotJSON`
+
+## Modes and URL parameters
+
+Artic remembers where the data came from and shows only what makes sense there:
+
+| Source | Save | Export, add/rename level |
+|---|---|---|
+| Local files (**local mode**) | – | yes |
+| Demo database | – | – |
+| Server (WebSocket) | yes, if `activeButtons.saveBundle` | – |
+| URL parameters / iframe | yes, if `activeButtons.saveBundle` | – |
+
+| Parameter | Values | Effect |
+|---|---|---|
+| `theme` | `system`, `light`, `dark` | Theme for this visit (not stored) |
+| `lang` | `sv`, `en` | UI language for this visit (not stored) |
+| `chrome` | `full`, `embedded`, `toolbar` | Header with logo / header without logo / toolbar only |
+
+## Fonts, icons and licences
+
+Jost, Noto Serif and Noto Sans are SIL OFL 1.1; Font Awesome Free icons are CC BY 4.0 (code MIT). `src/assets/fonts/ArticNotoSans-*.woff2` is built with `scripts/fonts/build-noto-sans-ipa.py` (see `scripts/fonts/README.md`). See `docs/THIRD-PARTY-NOTICES.md`.
 
 ## Supported audio formats
 
@@ -62,8 +83,11 @@ When changing the protocol or the bundle-list/time-anchor contract, bump the
 `features` list in `scripts/emit-manifest.mjs` accordingly.
 
 ## Tests
-* `npm test` — unit tests via Jest (262 tests)
+* `npm test` — Jest (service specs) and Vitest (tokens, theme, i18n, components)
 * `npm run test:jest` — Jest tests only
+* `npm run test:vitest` — Vitest only
+* `npm run test:visual` — Playwright visual regression; `npm run test:e2e` runs all Playwright specs (needs `npx playwright install chromium`; set `ARTIC_PORT` if 9000 is taken)
+* `npm run lint:tokens` — fails on colour, font-family or px font-size literals outside `src/core/theme/`
 * `npm run test:karma` — Karma tests (legacy)
 * `npm e2e` — end-to-end tests (currently not working)
 

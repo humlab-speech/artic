@@ -1,5 +1,34 @@
 # What's New
 
+## Version 1.5.3-humlab-2.0.0
+
+Redesign according to Språkbanken's graphic profile.
+
+### new features / performance tweaks / improvements
+
+- New look: Jost, Noto Serif and an IPA-complete Noto Sans subset, the five profile colours, Font Awesome icons, a header with logo, data selector and menu, a toolbar, a start view and a footer.
+- Light and dark theme. The default follows the operating system; the theme menu stores an explicit choice. URL parameter: `?theme=system|light|dark`.
+- Swedish and English UI with live switching (`?lang=sv|en`). The help manual stays in English.
+- Chrome levels for embedding hosts: `?chrome=full|embedded|toolbar` or `main.chrome` in the config.
+- Canvases follow the theme and the browser text size; the spectrogram inverts with the theme unless set in Settings.
+- Accessibility: focus ring, labelled icon buttons, keyboard-operable menus and dialogs with a focus trap, shortcuts suspended while a menu is open.
+- Dist is about 370 kB smaller (Material Icons removed).
+- `dist/artic-manifest.json` lists the new features `dataSourceModes`, `theming`, `i18n` and `chromeLevels`.
+
+### behaviour changes
+
+- **Adding levels, renaming levels and exporting TextGrid/annotJSON are shown in local mode only** (files added by the user). Server, demo and URL modes no longer show them, whatever `activeButtons` says. The `addLevelSeg`, `addLevelEvent`, `renameSelLevel`, `downloadTextGrid` and `downloadAnnotation` keys stay valid in the schema.
+- **Save sits next to the bundle name** and applies to the open bundle. The **S** shortcut only saves where Save is available.
+- The theme follows the operating system by default (it used to be dark).
+- Open demo and Connect moved from the toolbar to the start view. The database name in the header is a label, never a chooser.
+
+### bug fixes
+
+- Spectrogram "rendering..." overlay no longer draws black on black.
+- Switching bundle with unsaved changes shows one dialog instead of two.
+- The save shortcut no longer calls save in demo and local mode.
+- The About button works under a sub-path.
+
 ## Version 1.5.3
 
 ### new features / performance tweaks / improvements
