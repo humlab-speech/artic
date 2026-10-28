@@ -46,7 +46,7 @@
 
 	function close(refocus = false) {
 		open = false;
-		if (refocus) root?.querySelector<HTMLElement>('.sb-menu-trigger button, .sb-menu-trigger')?.focus();
+		if (refocus) root?.querySelector<HTMLElement>('.sb-menu-trigger button')?.focus();
 	}
 
 	function select(item: MenuItem) {

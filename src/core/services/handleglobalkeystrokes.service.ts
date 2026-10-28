@@ -111,7 +111,21 @@ export class HandleGlobalKeyStrokes{
         });
     };
 
+    /**
+     * Shortcuts are suspended while a menu is open, and Enter/Space on a focused
+     * button, link or menu item belongs to that control (it activates natively).
+     * Text fields are not listed on purpose: the label editor relies on Enter.
+     */
+    private isSuspended(code, e): boolean {
+        if (this.ViewStateService.menuOpen) return true;
+        if ((code === 13 || code === 32) && typeof Element !== 'undefined' && e?.target instanceof Element) {
+            return e.target.closest('button, a[href], [role="menu"], [role^="menuitem"]') !== null;
+        }
+        return false;
+    }
+
     private applyKeyCode (code, e) {
+        if (this.isSuspended(code, e)) return;
         scheduleUpdate(() => {
             if (this.ConfigProviderService.vals.main.catchMouseForKeyBinding) {
                 if (!this.ViewStateService.mouseInEmuWebApp) {
