@@ -28,8 +28,12 @@ export class ModalService {
 		this.dataExport = undefined;
 	};
 
-	public open(template, param1, param2, force) {
+	/** Look of the confirm button in confirm dialogs: 'danger' for close/disconnect and discard. */
+	public variant: 'primary' | 'danger' = 'primary';
+
+	public open(template, param1?, param2?, force?, options?: { variant?: 'primary' | 'danger' }) {
 		this.initialize();
+		this.variant = options?.variant ?? 'primary';
 		if (param1 !== undefined) {
 			this.dataIn = param1;
 			if (param1.y !== undefined) {

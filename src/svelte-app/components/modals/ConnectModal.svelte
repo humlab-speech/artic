@@ -2,6 +2,9 @@
 	import { getConfigTick } from '../../stores/app-state.svelte';
 	import { modalService, configProviderService, viewStateService } from '../../stores/services';
 	import { safeGetItem, safeSetItem } from '../../../core/util/safe-storage';
+	import { tr } from '../../stores/i18n.svelte';
+	import Button from '../ui/Button.svelte';
+	import { icons } from '../ui/icons';
 
 	function getStoredUrls(): string[] {
 		try {
@@ -49,12 +52,12 @@
 
 <div class="artic-modal-wrap">
 	<div class="artic-modal-header-large artic-modal-header">
-		<h3 id="modalHeading">Connect to Server</h3>
+		<h3 id="modalHeading">{tr('connect.title')}</h3>
 	</div>
 	<div class="artic-modal-body">
 		<div class="artic-text">
 			<div>
-				Please enter URL:<br />&nbsp;<br />
+				{tr('connect.enterUrl')}<br />&nbsp;<br />
 				<input
 					class="artic-modal-URL-input"
 					type="text"
@@ -63,8 +66,8 @@
 					onfocus={onFocus}
 					onblur={onBlur}
 				/>
-				<button class="artic-mini-btn-save" onclick={saveUrl}>(+)</button>
-				<button class="artic-mini-btn-save" onclick={() => deleteUrl(currentUrl)}>(-)</button>
+				<Button size="sm" iconOnly icon={icons.add} label={tr('connect.saveUrl')} onclick={saveUrl} />
+				<Button size="sm" iconOnly icon={icons.trash} label={tr('connect.deleteUrl')} onclick={() => deleteUrl(currentUrl)} />
 				<br />&nbsp;<br />
 				<select
 					size="10"
@@ -79,7 +82,7 @@
 		</div>
 	</div>
 	<div class="artic-modal-footer">
-		<button id="artic-modal-cancel" class="artic-mini-btn" onclick={() => modalService.close()}>Cancel</button>
-		<button id="artic-modal-confirm" class="artic-mini-btn" onclick={() => modalService.confirmContent()}>Connect</button>
+		<Button id="artic-modal-cancel" label={tr('dialog.cancel')} onclick={() => modalService.close()} />
+		<Button id="artic-modal-confirm" variant="primary" icon={icons.connect} label={tr('start.connectButton')} onclick={() => modalService.confirmContent()} />
 	</div>
 </div>

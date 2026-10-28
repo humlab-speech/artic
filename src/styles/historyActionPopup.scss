@@ -1,4 +1,3 @@
-@use 'artic-design' as *;
 @use 'font' as *;
 @use 'mixins' as *;
 
@@ -13,15 +12,15 @@
     top: 0;
     width: 30%;
     height: 30px;
-    background: var(--color-darkGrey);
-    color: var(--color-white);
+    background: var(--sb-surface);
+    color: var(--sb-text);
     z-index: -10;
     opacity: 0;
     font-weight: 900 !important;
     border: 0;
-    border-left: 1px solid var(--color-white);
-    border-right: 1px solid var(--color-white);
-    border-bottom: 1px solid var(--color-white);
+    border-left: 1px solid var(--sb-border-control);
+    border-right: 1px solid var(--sb-border-control);
+    border-bottom: 1px solid var(--sb-border-control);
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
     // @include vendor-prefix(transition, "all "+$animation-period+"ms ease-in");

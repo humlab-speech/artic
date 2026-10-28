@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount } from 'svelte';
 	import { getViewportTick, getMarkupTick } from '../stores/app-state.svelte';
 	import {
@@ -8,7 +10,6 @@
 		ssffDataService,
 		fontScaleService,
 	} from '../stores/services';
-	import { styles } from '../../core/util/styles';
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -41,9 +42,9 @@
 
 		syncCanvasSize();
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = 'green';
-		ctx.strokeStyle = styles.colorBlack;
-		ctx.font = `${parseInt(styles.fontInputSize.slice(0, -2))}px ${styles.fontInputFamily}`;
+		ctx.fillStyle = cs().color.contours[1];
+		ctx.strokeStyle = cs().color.text;
+		ctx.font = `${cs().size.sm}px ${cs().family.data}`;
 
 		const gridWidth = canvas.width / 8;
 		const gridHeight = canvas.height / 8;
@@ -62,7 +63,7 @@
 				binValStrArr.push('0');
 			}
 			binValStrArr.forEach((binStr: string, binStrIdx: number) => {
-				ctx.fillStyle = binStr === '1' ? 'grey' : 'white';
+				ctx.fillStyle = binStr === '1' ? cs().color.signal : cs().color.tierBg;
 				ctx.fillRect(binStrIdx * gridWidth + 5, gridHeight * elIdx + 5, gridWidth - 10, gridHeight - 10);
 			});
 		});
@@ -70,8 +71,8 @@
 		// Labels
 		fontScaleService.drawUndistortedTextTwoLines(
 			ctx, 'EPG', 'Frame:' + curFrame,
-			parseInt(styles.fontInputSize.slice(0, -2)) * 3 / 4,
-			styles.fontInputFamily, 5, 0, styles.colorBlack, true
+			cs().size.sm * 3 / 4,
+			cs().family.data, 5, 0, cs().color.text, true
 		);
 	}
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount, onDestroy } from 'svelte';
 	import { getViewportTick } from '../stores/app-state.svelte';
 	import {
@@ -14,11 +16,6 @@
 	import { safeGetItem } from '../../core/util/safe-storage';
 
 	// Colors
-	const COLOR_BLACK = '#000';
-	const COLOR_WHITE = '#fff';
-	const COLOR_BLUE = '#0DC5FF';
-	const COLOR_YELLOW = '#ff0';
-	const COLOR_GREY = '#424242';
 
 	let canvas: HTMLCanvasElement;
 	let markupCanvas: HTMLCanvasElement;
@@ -106,7 +103,7 @@
 			fontScaleService.drawUndistortedText(
 				ctx, levelDetails.name, fontSize - 2, fontFamily,
 				4, topLimitPxl + (bottomLimitPxl - topLimitPxl) / 2,
-				COLOR_BLUE, true
+				cs().color.accentText, true
 			);
 		} else {
 			fontScaleService.drawUndistortedTextTwoLines(
@@ -115,7 +112,7 @@
 				'(' + levelDetails.type + ')',
 				fontSize, fontFamily,
 				4, topLimitPxl + (bottomLimitPxl - topLimitPxl) / 2,
-				COLOR_YELLOW, true
+				cs().color.warning, true
 			);
 		}
 
@@ -125,7 +122,7 @@
 		const vpES = viewStateService.curViewPort.eS;
 
 		if (levelDetails.type === 'SEGMENT' || levelDetails.type === 'ITEM') {
-			ctx.fillStyle = COLOR_WHITE;
+			ctx.fillStyle = cs().color.text;
 
 			levelDetails.items.forEach((item: any) => {
 				if (
@@ -142,11 +139,11 @@
 					const posE = viewStateService.getPos(ctx.canvas.width, item.sampleStart + item.sampleDur + 1);
 
 					// Segment start line
-					ctx.fillStyle = COLOR_WHITE;
+					ctx.fillStyle = cs().color.text;
 					ctx.fillRect(posS, topLimitPxl, 2, (bottomLimitPxl - topLimitPxl) / 2);
 
 					// Segment end line
-					ctx.fillStyle = COLOR_GREY;
+					ctx.fillStyle = cs().color.boundaryMuted;
 					ctx.fillRect(posE, topLimitPxl + (bottomLimitPxl - topLimitPxl) / 2, 2, (bottomLimitPxl - topLimitPxl) / 2);
 
 					ctx.font = (labelFontSize - 2) + 'px ' + labelFontFamily;
@@ -157,7 +154,7 @@
 							ctx, curLabVal, labelFontSize - 2, labelFontFamily,
 							posS + (posE - posS) / 2,
 							(topLimitPxl + (bottomLimitPxl - topLimitPxl) / 2) - (fontSize - 2) + 2,
-							COLOR_WHITE, false
+							cs().color.text, false
 						);
 					}
 
@@ -166,7 +163,7 @@
 						const labelCenter = posS + (posE - posS) / 2;
 
 						let hlY = topLimitPxl + (bottomLimitPxl - topLimitPxl) / 4;
-						ctx.strokeStyle = COLOR_WHITE;
+						ctx.strokeStyle = cs().color.text;
 						ctx.beginPath();
 						ctx.moveTo(posS, hlY);
 						ctx.lineTo(labelCenter, hlY);
@@ -174,7 +171,7 @@
 						ctx.stroke();
 
 						hlY = topLimitPxl + (bottomLimitPxl - topLimitPxl) / 4 * 3;
-						ctx.strokeStyle = COLOR_GREY;
+						ctx.strokeStyle = cs().color.boundaryMuted;
 						ctx.beginPath();
 						ctx.moveTo(posE, hlY);
 						ctx.lineTo(labelCenter, hlY);
@@ -184,7 +181,7 @@
 				}
 			});
 		} else if (levelDetails.type === 'EVENT') {
-			ctx.fillStyle = COLOR_WHITE;
+			ctx.fillStyle = cs().color.text;
 
 			levelDetails.items.forEach((item: any) => {
 				if (item.samplePoint > vpSS && item.samplePoint < vpES) {
@@ -195,7 +192,7 @@
 						if (lab.name === curAttrDef) curLabVal = lab.value;
 					});
 
-					ctx.fillStyle = COLOR_WHITE;
+					ctx.fillStyle = cs().color.text;
 					const halfH = (bottomLimitPxl - topLimitPxl) / 2;
 					const fifthH = (bottomLimitPxl - topLimitPxl) / 5;
 					ctx.fillRect(perc, 0, 1, halfH - fifthH);
@@ -204,7 +201,7 @@
 					fontScaleService.drawUndistortedText(
 						ctx, curLabVal, labelFontSize - 2, labelFontFamily,
 						perc, halfH - (fontSize - 2) + 2,
-						COLOR_WHITE, false
+						cs().color.text, false
 					);
 				}
 			});
@@ -278,12 +275,12 @@
 		<canvas
 			bind:this={canvas}
 			class="artic-level-canvas"
-			style="background: {COLOR_BLACK};"
+			style="background: var(--sb-canvas-bg);"
 		></canvas>
 		<canvas
 			bind:this={markupCanvas}
 			class="artic-level-markup"
-			style="background-color: rgba(200, 200, 200, 0.3); filter: blur(1px);"
+			style="background-color: var(--sb-overlay); filter: blur(1px);"
 		></canvas>
 	</div>
 </div>

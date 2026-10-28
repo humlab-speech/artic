@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tr } from '../stores/i18n.svelte';
 	import type { Snippet } from 'svelte';
 	import { invalidateViewport } from '../stores/app-state.svelte';
 
@@ -56,7 +57,7 @@
 		aria-valuenow={Math.round(splitRatio * 100)}
 		aria-valuemin={0}
 		aria-valuemax={100}
-		aria-label="Resize panels"
+		aria-label={tr('layout.resizePanels')}
 		tabindex="0"
 	>
 		<span></span>
@@ -82,7 +83,7 @@
 
 	.split-handler {
 		height: 6px;
-		background: #444;
+		background: var(--sb-surface-2);
 		cursor: row-resize;
 		display: flex;
 		align-items: center;
@@ -93,7 +94,7 @@
 	.split-handler span {
 		width: 30px;
 		height: 2px;
-		background: #888;
+		background: var(--sb-border-control);
 		border-radius: 1px;
 	}
 </style>

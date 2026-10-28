@@ -8,6 +8,12 @@
 				"autoConnect": {
 					"type": "boolean"
 				},
+				"chrome": {
+					"enum": ["full", "embedded", "toolbar"]
+				},
+				"chrome": {
+					"enum": ["full", "embedded", "toolbar"]
+				},
 				"serverUrl": {
 					"type": "string"
 				},

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getConfigTick, invalidate } from '../stores/app-state.svelte';
+	import { tr } from '../stores/i18n.svelte';
+	import { getConfigTick, getTick, invalidate } from '../stores/app-state.svelte';
 	import {
 		viewStateService,
 		levelService,
@@ -7,6 +8,8 @@
 		configProviderService,
 	} from '../stores/services';
 	import OsciOverview from './OsciOverview.svelte';
+	import Button from './ui/Button.svelte';
+	import { icons } from './ui/icons';
 
 	function cmdZoomIn() {
 		if (!viewStateService.getPermission('zoom')) return;
@@ -75,59 +78,37 @@
 
 	let canZoom = $derived.by(() => { getConfigTick(); return viewStateService.getPermission('zoom'); });
 	let canPlay = $derived.by(() => { getConfigTick(); return viewStateService.getPermission('playaudio'); });
+
+	// Selection readout, e.g. "Selection 0.740–0.893 s (153 ms)"
+	let selectionText = $derived.by(() => {
+		getTick();
+		const vp = viewStateService.curViewPort;
+		const rate = soundHandlerService.audioBuffer?.sampleRate;
+		if (!vp || !rate || !(vp.selectE > vp.selectS)) return '';
+		const s = vp.selectS / rate, e = vp.selectE / rate;
+		return tr('bottom.selectionReadout', { from: s.toFixed(3), to: e.toFixed(3), ms: Math.round((e - s) * 1000) });
+	});
 </script>
 
-<div class="artic-bottom-menu">
+<div class="sb-bottombar artic-bottom-menu">
 	<div>
 		<OsciOverview />
 	</div>
 
-	<button class="artic-mini-btn left" id="zoomInBtn"
-		disabled={!canZoom}
-		onclick={cmdZoomIn}>
-		<i class="material-icons">expand_less</i>in
-	</button>
-	<button class="artic-mini-btn left" id="zoomOutBtn"
-		disabled={!canZoom}
-		onclick={cmdZoomOut}>
-		<i class="material-icons">expand_more</i>out
-	</button>
-	<button class="artic-mini-btn left" id="zoomLeftBtn"
-		disabled={!canZoom}
-		onclick={cmdZoomLeft}>
-		<i class="material-icons">chevron_left</i>left
-	</button>
-	<button class="artic-mini-btn left" id="zoomRightBtn"
-		disabled={!canZoom}
-		onclick={cmdZoomRight}>
-		<i class="material-icons">chevron_right</i>right
-	</button>
-	<button class="artic-mini-btn left" id="zoomAllBtn"
-		disabled={!canZoom}
-		onclick={cmdZoomAll}>
-		<i class="material-icons" style="transform: rotate(90deg)">unfold_less</i>all
-	</button>
-	<button class="artic-mini-btn left" id="zoomSelBtn"
-		disabled={!canZoom}
-		onclick={cmdZoomSel}>
-		<i class="material-icons" style="transform: rotate(90deg)">unfold_more</i>selection
-	</button>
+	<div class="sb-bottombar-row">
+		<Button id="zoomInBtn" icon={icons.zoomIn} label={tr('bottom.zoomIn')} disabled={!canZoom} onclick={cmdZoomIn} />
+		<Button id="zoomOutBtn" icon={icons.zoomOut} label={tr('bottom.zoomOut')} disabled={!canZoom} onclick={cmdZoomOut} />
+		<Button id="zoomLeftBtn" icon={icons.left} label={tr('bottom.left')} disabled={!canZoom} onclick={cmdZoomLeft} />
+		<Button id="zoomRightBtn" icon={icons.right} label={tr('bottom.right')} disabled={!canZoom} onclick={cmdZoomRight} />
+		<Button id="zoomAllBtn" icon={icons.zoomAll} label={tr('bottom.all')} disabled={!canZoom} onclick={cmdZoomAll} />
+		<Button id="zoomSelBtn" icon={icons.zoomSelection} label={tr('bottom.selection')} disabled={!canZoom} onclick={cmdZoomSel} />
 
-	{#if restrictions?.playback}
-		<button class="artic-mini-btn left" id="playViewBtn"
-			disabled={!canPlay}
-			onclick={cmdPlayView}>
-			<i class="material-icons">play_arrow</i>in view
-		</button>
-		<button class="artic-mini-btn left" id="playSelBtn"
-			disabled={!canPlay}
-			onclick={cmdPlaySel}>
-			<i class="material-icons">play_circle_outline</i>selected
-		</button>
-		<button class="artic-mini-btn left" id="playAllBtn"
-			disabled={!canPlay}
-			onclick={cmdPlayAll}>
-			<i class="material-icons">play_circle_filled</i>entire file
-		</button>
-	{/if}
+		{#if restrictions?.playback}
+			<Button id="playViewBtn" variant="outline" icon={icons.play} label={tr('bottom.playView')} disabled={!canPlay} onclick={cmdPlayView} />
+			<Button id="playSelBtn" icon={icons.playSelection} label={tr('bottom.playSelection')} disabled={!canPlay} onclick={cmdPlaySel} />
+			<Button id="playAllBtn" icon={icons.play} label={tr('bottom.playAll')} disabled={!canPlay} onclick={cmdPlayAll} />
+		{/if}
+
+		{#if selectionText}<span class="sb-selection sb-data">{selectionText}</span>{/if}
+	</div>
 </div>

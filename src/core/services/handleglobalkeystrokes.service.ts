@@ -1,5 +1,6 @@
+import { t } from '../util/i18n';
 import { scheduleUpdate } from '../util/schedule-update';
-import { styles } from '../util/styles';
+import { motion } from '../theme/tokens';
 
 export class HandleGlobalKeyStrokes{
 
@@ -9,6 +10,7 @@ export class HandleGlobalKeyStrokes{
     private HierarchyLayoutService;
     private SoundHandlerService;
     private ConfigProviderService;
+    private DataSourceService;
     private HistoryService;
     private LevelService;
     private DataService;
@@ -28,6 +30,7 @@ export class HandleGlobalKeyStrokes{
         SoundHandlerService: any; ConfigProviderService: any; HistoryService: any;
         LevelService: any; DataService: any; LinkService: any;
         AnagestService: any; DbObjLoadSaveService: any; BrowserDetectorService: any;
+        DataSourceService?: any;
     }) {
         Object.assign(this, deps);
     }
@@ -99,9 +102,10 @@ export class HandleGlobalKeyStrokes{
                     }
                 }
                 if (domElement) {
-                    domElement.style.backgroundColor = this.ViewStateService.isSavingAllowed()
-                        ? 'rgba(255,255,0,1)'
-                        : 'rgba(255,0,0,1)';
+                    // Colours come from .is-valid / .is-invalid (styles/ui.scss)
+                    const allowed = this.ViewStateService.isSavingAllowed();
+                    domElement.classList.toggle('is-valid', allowed);
+                    domElement.classList.toggle('is-invalid', !allowed);
                 }
             }
         });
@@ -344,7 +348,7 @@ export class HandleGlobalKeyStrokes{
             e.stopPropagation();
             this.LevelService.deleteEditArea();
             this.ViewStateService.setEditing(false);
-            this.ModalService.open('views/error.html', 'Editing Error: Sorry, characters allowed on this Level are "' + JSON.stringify(definitions) + '"');
+            this.ModalService.open('views/error.html', t('msg.illegalChars') + JSON.stringify(definitions) + '"');
             return;
         }
 
@@ -435,7 +439,8 @@ export class HandleGlobalKeyStrokes{
                 }
             },
             [km.saveBndl]: () => {
-                if (this.ViewStateService.getPermission('saveBndlBtnClick')) {
+                // D4: save only where the data source can actually store it
+                if (this.DataSourceService?.capabilities.canSave && this.ViewStateService.getPermission('saveBndlBtnClick')) {
                     this.DbObjLoadSaveService.saveBundle();
                 }
             },
@@ -454,7 +459,7 @@ export class HandleGlobalKeyStrokes{
             [km.snapBoundaryToNearestZeroCrossing]: () => this.handleSnapToZeroCrossing(),
             [km.toggleSideBarLeft]: () => {
                 if (this.ViewStateService.getPermission('toggleSideBars') && this.ConfigProviderService.vals.activeButtons.openMenu) {
-                    this.ViewStateService.toggleBundleListSideBar(styles.animationPeriod);
+                    this.ViewStateService.toggleBundleListSideBar(motion.period);
                 }
             },
             [km.toggleSideBarRight]: () => {
@@ -636,18 +641,18 @@ export class HandleGlobalKeyStrokes{
         } else if (this.ConfigProviderService.vals.labelCanvasConfig.addTimeMode === 'absolute') {
             return parseInt(this.ConfigProviderService.vals.labelCanvasConfig.addTimeValue, 10);
         } else {
-            this.ModalService.open('views/error.html', 'Expand Segements Error: Error in Configuration (Value labelCanvasConfig.addTimeMode)');
+            this.ModalService.open('views/error.html', t('msg.expandConfig'));
             return 0;
         }
     }
 
     private handleExpandShrinkSegment(rightSide, negate) {
         if (this.ViewStateService.getcurClickLevelName() === undefined) {
-            this.ModalService.open('views/error.html', 'Expand Segments Error: Please select a Level first');
+            this.ModalService.open('views/error.html', t('msg.expandNoLevel'));
             return;
         }
         if (this.ViewStateService.getselected().length === 0) {
-            this.ModalService.open('views/error.html', 'Expand Segments Error: Please select one or more Segments first');
+            this.ModalService.open('views/error.html', t('msg.expandNoSegments'));
             return;
         }
         var changeTime = this.getChangeTime();
@@ -668,7 +673,7 @@ export class HandleGlobalKeyStrokes{
     private handleSelectItemsInSelection() {
         if (!this.ViewStateService.getPermission('labelAction')) return;
         if (this.ViewStateService.getcurClickLevelName() === undefined) {
-            this.ModalService.open('views/error.html', 'Selection Error : Please select a Level first');
+            this.ModalService.open('views/error.html', t('msg.selectionNoLevel'));
             return;
         }
         this.ViewStateService.curClickItems = [];
@@ -765,7 +770,7 @@ export class HandleGlobalKeyStrokes{
         }
 
         if (this.ViewStateService.curClickLevelIndex === undefined) {
-            this.ModalService.open('views/error.html', 'Modify Error: Please select a Segment or Event Level first.');
+            this.ModalService.open('views/error.html', t('msg.modifyNoLevel'));
             return;
         }
         if (!this.ViewStateService.getPermission('labelAction')) return;
@@ -779,11 +784,11 @@ export class HandleGlobalKeyStrokes{
                     this.ViewStateService.setcursorInTextField(true);
                 }
             } else {
-                this.ModalService.open('views/error.html', 'Modify Error: Please select a single Segment.');
+                this.ModalService.open('views/error.html', t('msg.modifySingle'));
             }
         } else {
             if (this.ViewStateService.curViewPort.selectE === -1 && this.ViewStateService.curViewPort.selectS === -1) {
-                this.ModalService.open('views/error.html', 'Error : Please select a Segment or Point to modify it\'s name. Or select a level plus a range in the viewport in order to insert a new Segment.');
+                this.ModalService.open('views/error.html', t('msg.modifyOrInsert'));
             } else {
                 var seg = this.LevelService.getClosestItem(this.ViewStateService.curViewPort.selectS, this.ViewStateService.getcurClickLevelName(), this.SoundHandlerService.audioBuffer.length).current;
                 if (this.ViewStateService.getcurClickLevelType() === 'SEGMENT') {
@@ -799,7 +804,7 @@ export class HandleGlobalKeyStrokes{
         if (seg === undefined) {
             var insSeg = this.LevelService.insertSegment(this.ViewStateService.getcurClickLevelName(), this.ViewStateService.curViewPort.selectS, this.ViewStateService.curViewPort.selectE, this.ConfigProviderService.vals.labelCanvasConfig.newSegmentName);
             if (!insSeg.ret) {
-                this.ModalService.open('views/error.html', 'Error : You are not allowed to insert a Segment here.');
+                this.ModalService.open('views/error.html', t('msg.noInsert'));
             } else {
                 this.HistoryService.addObjToUndoStack({
                     'type': 'ANNOT',
@@ -819,7 +824,7 @@ export class HandleGlobalKeyStrokes{
             } else {
                 var insSeg = this.LevelService.insertSegment(this.ViewStateService.getcurClickLevelName(), this.ViewStateService.curViewPort.selectS, this.ViewStateService.curViewPort.selectE, this.ConfigProviderService.vals.labelCanvasConfig.newSegmentName);
                 if (!insSeg.ret) {
-                    this.ModalService.open('views/error.html', 'Error : You are not allowed to insert a Segment here.');
+                    this.ModalService.open('views/error.html', t('msg.noInsert'));
                 } else {
                     this.HistoryService.addObjToUndoStack({
                         'type': 'ANNOT',
@@ -962,7 +967,7 @@ export class HandleGlobalKeyStrokes{
             }
             this.ViewStateService.setcurClickItem(deletedSegment.clickSeg);
         } else {
-            this.ModalService.open('views/error.html', 'Delete Error: You can not delete Segments on Point Levels.');
+            this.ModalService.open('views/error.html', t('msg.noDeleteOnPoint'));
         }
     }
 

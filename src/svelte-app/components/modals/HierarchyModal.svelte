@@ -9,6 +9,11 @@
 		standardFuncsService,
 	} from '../../stores/services';
 	import EmuHierarchy from '../EmuHierarchy.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import Button from '../ui/Button.svelte';
+	import Menu from '../ui/Menu.svelte';
+	import { tr } from '../../stores/i18n.svelte';
+	import { icons } from '../ui/icons';
 
 	const pathInfo = hierarchyLayoutService.findAllNonPartialPaths();
 	const possiblePaths: string[][] = pathInfo.possible;
@@ -35,7 +40,6 @@
 	});
 
 	// Dropdown state for attribute definition selectors per level (RC4)
-	let dropdownOpen: Record<string, boolean> = $state({});
 
 	function onPathChange(event: Event) {
 		const idx = parseInt((event.target as HTMLSelectElement).value, 10);
@@ -62,12 +66,11 @@
 
 	let viewportSyncLabel = $derived.by(() => {
 		getConfigTick();
-		return viewStateService.hierarchyState.viewportSync ? 'show all' : 'sync with zoom';
+		return viewStateService.hierarchyState.viewportSync ? tr('hierarchyDialog.showAll') : tr('hierarchyDialog.syncZoom');
 	});
 
 	function setCurrentAttrDef(levelName: string, attrName: string, index: number) {
 		viewStateService.setCurAttrDef(levelName, attrName, index);
-		dropdownOpen[levelName] = false;
 		invalidate();
 	}
 </script>
@@ -75,34 +78,16 @@
 <div class="artic-modal-wrap">
 	<div class="artic-modal-header-large artic-modal-header">
 		{#each [...currentPath].reverse() as levelName (levelName)}
-			<div class="artic-nav-wrap" style="margin-left: 5px;">
-				<ul class="artic-dropdown-container">
-					<li class="left">
-						<button class="artic-mini-btn full"
-							onmouseenter={() => dropdownOpen[levelName] = true}
-							onmouseleave={() => dropdownOpen[levelName] = false}
-							onclick={() => dropdownOpen[levelName] = !dropdownOpen[levelName]}
-						>
-							{levelName} <span id="artic-dropdown-arrow"></span>
-						</button>
-						{#if dropdownOpen[levelName]}
-							<ul class="artic-dropdown-menu"
-								onmouseenter={() => dropdownOpen[levelName] = true}
-								onmouseleave={() => dropdownOpen[levelName] = false}
-							>
-								{#each configProviderService.getAttrDefsNames(levelName) || [] as attrName, i}
-									<li
-										role="menuitem"
-										tabindex="0"
-										onclick={() => setCurrentAttrDef(levelName, attrName, i)}
-										onkeydown={(e) => e.key === 'Enter' && setCurrentAttrDef(levelName, attrName, i)}
-									>&rarr; {attrName}</li>
-								{/each}
-							</ul>
-						{/if}
-					</li>
-				</ul>
-			</div>
+			<span style="margin-left: 5px;">
+				<Menu
+					variant="outline"
+					label={levelName}
+					items={(configProviderService.getAttrDefsNames(levelName) || []).map((attrName: string, i: number) => ({
+						label: '→ ' + attrName,
+						onselect: () => setCurrentAttrDef(levelName, attrName, i),
+					}))}
+				/>
+			</span>
 		{/each}
 	</div>
 	<div class="artic-modal-body artic-modal-hierarchy">
@@ -116,9 +101,9 @@
 		<EmuHierarchy />
 	</div>
 	<div class="artic-modal-footer">
-		<button class="artic-mini-btn" onclick={playSelection}>play selected</button>
-		<button class="artic-mini-btn" onclick={toggleViewportSync}>{viewportSyncLabel}</button>
-		<button class="artic-mini-btn" onclick={rotateHierarchy}>&#x21BB; rotate by 90&deg;</button>
-		<button class="artic-mini-btn" onclick={() => modalService.close()}>close hierarchy</button>
+		<Button icon={icons.play} label={tr('hierarchyDialog.playSelected')} onclick={playSelection} />
+		<Button label={viewportSyncLabel} onclick={toggleViewportSync} />
+		<Button icon={icons.rotate} label={tr('hierarchyDialog.rotate')} onclick={rotateHierarchy} />
+		<Button label={tr('dialog.close')} onclick={() => modalService.close()} />
 	</div>
 </div>

@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { getConfigTick } from '../../stores/app-state.svelte';
+	import { tr } from '../../stores/i18n.svelte';
 	import { modalService } from '../../stores/services';
+	import Button from '../ui/Button.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import { icons } from '../ui/icons';
 
 	let message = $derived(getConfigTick() >= 0 ? modalService.dataIn : '');
 </script>
 
 <div class="artic-modal-wrap">
 	<div class="artic-modal-header-large artic-modal-header">
-		<h3 id="modalHeading">Error</h3>
+		<h3 id="modalHeading"><span class="sb-dialog-icon sb-dialog-icon-danger"><Icon icon={icons.error} /></span>{tr('error.title')}</h3>
 	</div>
 	<div class="artic-modal-body">
 		<div class="artic-text">
@@ -15,7 +19,6 @@
 		</div>
 	</div>
 	<div class="artic-modal-footer">
-		<button id="artic-modal-cancel" class="artic-mini-btn" onclick={() => modalService.close()}>Cancel</button>
+		<Button id="artic-modal-cancel" label={tr('dialog.close')} onclick={() => modalService.close()} />
 	</div>
 </div>
-

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount } from 'svelte';
 	import { getViewportTick, getMarkupTick } from '../stores/app-state.svelte';
 	import {
@@ -9,10 +11,8 @@
 		fontScaleService,
 		mathHelperService,
 	} from '../stores/services';
-	import { styles } from '../../core/util/styles';
 	import { getValueAtTime, mergeTrackPair, type TrackInfo } from '../utils/track-merge';
 
-	const CONTOUR_COLORS = ['#73A790','#2A4765','#D7B17C','#EABAB9','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
 
 	let staticCanvas: HTMLCanvasElement;
 	let dotsCanvas: HTMLCanvasElement;
@@ -25,8 +25,8 @@
 	let globalMaxY = -Infinity;
 	const startPoint = 0;
 	const endPoint = (Math.PI / 180) * 360;
-	const smallFontSize = parseInt(styles.fontInputSize.slice(0, -2)) * 9 / 8;
-	const labelFontSize = (parseInt(styles.fontInputSize.slice(0, -2)) - 4) * 3 / 2;
+	const smallFontSize = cs().size.sm * 9 / 8;
+	const labelFontSize = (cs().size.sm - 4) * 3 / 2;
 
 	function syncCanvasSize(c: HTMLCanvasElement) {
 		if (!c) return;
@@ -126,7 +126,7 @@
 			const yTrack = buildTrackInfo(sc.ySsffTrack);
 			if (!xTrack || !yTrack) continue;
 
-			const color = sc.color || CONTOUR_COLORS[i % CONTOUR_COLORS.length];
+			const color = sc.color || cs().color.contours[i % cs().color.contours.length];
 			const merged = mergeTrackPair(xTrack, yTrack);
 			let xPrev: number | undefined;
 			let yPrev: number | undefined;
@@ -177,7 +177,7 @@
 
 		// Corner markers
 		ctx.lineWidth = 2;
-		ctx.strokeStyle = CONTOUR_COLORS[0];
+		ctx.strokeStyle = cs().color.contours[0];
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
 		ctx.lineTo(5, 5);
@@ -189,10 +189,10 @@
 		ctx.closePath();
 
 		// Axis labels
-		fontScaleService.drawUndistortedText(ctx, 'yMax: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMaxY, 2), smallFontSize, styles.fontInputFamily, 5, 5, styles.colorWhite, true);
-		fontScaleService.drawUndistortedTextTwoLines(ctx, 'yMin: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMinY, 2), 'xMin: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMinX, 2), smallFontSize, styles.fontInputFamily, 5, dotsCanvas.height - smallFontSize * scaleY * 2 - 5, styles.colorWhite, true);
+		fontScaleService.drawUndistortedText(ctx, 'yMax: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMaxY, 2), smallFontSize, cs().family.data, 5, 5, cs().color.text, true);
+		fontScaleService.drawUndistortedTextTwoLines(ctx, 'yMin: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMinY, 2), 'xMin: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMinX, 2), smallFontSize, cs().family.data, 5, dotsCanvas.height - smallFontSize * scaleY * 2 - 5, cs().color.text, true);
 		const tw0 = ctx.measureText('xMax: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMaxX, 5)).width * scaleX;
-		fontScaleService.drawUndistortedText(ctx, 'xMax: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMaxX, 2), smallFontSize, styles.fontInputFamily, dotsCanvas.width - tw0 - 5, dotsCanvas.height - smallFontSize * scaleY - 5, styles.colorWhite, true);
+		fontScaleService.drawUndistortedText(ctx, 'xMax: ' + mathHelperService.roundToNdigitsAfterDecPoint(globalMaxX, 2), smallFontSize, cs().family.data, dotsCanvas.width - tw0 - 5, dotsCanvas.height - smallFontSize * scaleY - 5, cs().color.text, true);
 
 		// Compute current time from mouse position
 		const curMousePosTime = viewStateService.curMousePosSample / soundHandlerService.audioBuffer.sampleRate;
@@ -211,7 +211,7 @@
 		const tw = ctx.measureText('frame: ' + curFrame).width * scaleX;
 		ctx.save();
 		ctx.rotate(90 * Math.PI / 180);
-		fontScaleService.drawUndistortedText(ctx, 'frame: ' + curFrame, labelFontSize, styles.fontInputFamily, dotsCanvas.width / 2 - tw / 2, -dotsCanvas.height, styles.colorWhite, true);
+		fontScaleService.drawUndistortedText(ctx, 'frame: ' + curFrame, labelFontSize, cs().family.data, dotsCanvas.width / 2 - tw / 2, -dotsCanvas.height, cs().color.text, true);
 		ctx.restore();
 
 		// Draw dots using time-domain interpolation
@@ -230,7 +230,7 @@
 			const x = ((xVal - globalMinX) / (globalMaxX - globalMinX) * dotsCanvas.width);
 			const y = dotsCanvas.height - ((yVal - globalMinY) / (globalMaxY - globalMinY) * dotsCanvas.height);
 
-			const dotColor = dot.color || CONTOUR_COLORS[i % CONTOUR_COLORS.length];
+			const dotColor = dot.color || cs().color.contours[i % cs().color.contours.length];
 			ctx.strokeStyle = dotColor;
 			ctx.fillStyle = dotColor;
 			ctx.beginPath();
@@ -243,7 +243,7 @@
 			ctx.fill();
 			ctx.closePath();
 
-			fontScaleService.drawUndistortedText(ctx, dot.name, labelFontSize, styles.fontInputFamily, x, y - 5, styles.colorWhite, true);
+			fontScaleService.drawUndistortedText(ctx, dot.name, labelFontSize, cs().family.data, x, y - 5, cs().color.text, true);
 
 			allDots.push({ name: dot.name, x, y });
 		}
@@ -254,7 +254,7 @@
 				const f = allDots.find(d => d.name === c.fromDot);
 				const t = allDots.find(d => d.name === c.toDot);
 				if (!f || !t) return;
-				ctx.strokeStyle = c.color || CONTOUR_COLORS[ci % CONTOUR_COLORS.length];
+				ctx.strokeStyle = c.color || cs().color.contours[ci % cs().color.contours.length];
 				ctx.beginPath();
 				ctx.moveTo(f.x, f.y);
 				ctx.lineTo(t.x, t.y);
@@ -266,12 +266,12 @@
 		// Static dots
 		if (dD.staticDots) {
 			dD.staticDots.forEach((sD: any, si: number) => {
-				const sdColor = sD.color || CONTOUR_COLORS[si % CONTOUR_COLORS.length];
+				const sdColor = sD.color || cs().color.contours[si % cs().color.contours.length];
 				ctx.strokeStyle = sdColor;
 				ctx.fillStyle = sdColor;
 				const labelX = ((sD.xNameCoordinate - globalMinX) / (globalMaxX - globalMinX) * dotsCanvas.width);
 				const labelY = dotsCanvas.height - ((sD.yNameCoordinate - globalMinY) / (globalMaxY - globalMinY) * dotsCanvas.height);
-				fontScaleService.drawUndistortedText(ctx, sD.name, labelFontSize, styles.fontInputFamily, labelX, labelY, sdColor, true);
+				fontScaleService.drawUndistortedText(ctx, sD.name, labelFontSize, cs().family.data, labelX, labelY, sdColor, true);
 
 				sD.xCoordinates.forEach((xVal: number, xIdx: number) => {
 					const x = ((xVal - globalMinX) / (globalMaxX - globalMinX) * dotsCanvas.width);

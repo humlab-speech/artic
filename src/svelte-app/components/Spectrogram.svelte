@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount, onDestroy } from 'svelte';
 	import { getViewportTick } from '../stores/app-state.svelte';
 	import {
@@ -9,7 +11,6 @@
 		mathHelperService,
 	} from '../stores/services';
 	import { SpectroDrawingWorker } from '../../core/workers/spectro-drawing.worker';
-	import { styles } from '../../core/util/styles';
 	import SsffCanvas from './SsffCanvas.svelte';
 	import SignalCanvasMarkup from './SignalCanvasMarkup.svelte';
 
@@ -36,16 +37,16 @@
 	let renderJobId = 0;
 
 	function showRenderingOverlay() {
-		ctx.fillStyle = styles.colorBlack;
+		ctx.fillStyle = cs().color.bg;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 		fontScaleService.drawUndistortedText(
 			ctx,
 			'rendering...',
-			parseInt(styles.fontSmallSize.slice(0, -2)) * 0.75,
-			styles.fontSmallFamily,
+			cs().size.sm * 0.75,
+			cs().family.data,
 			10,
 			50,
-			styles.colorBlack,
+			cs().color.textMuted,
 			true
 		);
 	}
@@ -121,7 +122,7 @@
 			if (event.status === undefined) {
 				const tmp = new Uint8ClampedArray(event.img);
 				imageData.data.set(tmp);
-				if (viewStateService.spectroSettings?.invert && !viewStateService.spectroSettings?.drawHeatMapColors) {
+				if (effectiveInvert() && !viewStateService.spectroSettings?.drawHeatMapColors) {
 					const d = imageData.data;
 					for (let i = 0; i < d.length; i += 4) {
 						d[i]     = 255 - d[i];
@@ -154,10 +155,10 @@
 			'drawHeatMapColors': viewStateService.spectroSettings.drawHeatMapColors,
 			'preEmphasisFilterFactor': viewStateService.spectroSettings.preEmphasisFilterFactor,
 			// When heatmap + invert: reverse anchor order (gradient direction flip) instead of RGB inversion
-			'heatMapColorAnchors': (viewStateService.spectroSettings.invert && viewStateService.spectroSettings.drawHeatMapColors)
+			'heatMapColorAnchors': (effectiveInvert() && viewStateService.spectroSettings.drawHeatMapColors)
 				? [viewStateService.spectroSettings.heatMapColorAnchors[2], viewStateService.spectroSettings.heatMapColorAnchors[1], viewStateService.spectroSettings.heatMapColorAnchors[0]]
 				: viewStateService.spectroSettings.heatMapColorAnchors,
-			'invert': viewStateService.spectroSettings.invert,
+			'invert': effectiveInvert(),
 		}, [paddedSamples.buffer]);
 	}
 
@@ -191,10 +192,17 @@
 		}
 	});
 
+	// The worker's plain output is light energy on dark. Invert follows the theme
+	// (light theme = dark energy on white) unless the user set it in Settings.
+	function effectiveInvert(): boolean {
+		const s = viewStateService.spectroSettings;
+		return s?.invertSource === 'user' ? !!s.invert : getCanvasStyle().theme === 'light';
+	}
+
 	function spectroSettingsKey(): string {
 		const s = viewStateService.spectroSettings;
 		if (!s) return '';
-		return `${s.windowSizeInSecs}|${s.rangeTo}|${s.rangeFrom}|${s.dynamicRange}|${s.window}|${s.drawHeatMapColors}|${s.preEmphasisFilterFactor}|${s.invert}`;
+		return `${s.windowSizeInSecs}|${s.rangeTo}|${s.rangeFrom}|${s.dynamicRange}|${s.window}|${s.drawHeatMapColors}|${s.preEmphasisFilterFactor}|${effectiveInvert()}`;
 	}
 
 	$effect(() => {

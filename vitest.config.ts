@@ -5,6 +5,7 @@ import path from 'path';
 export default defineConfig({
 	plugins: [svelte({ hot: false })],
 	resolve: {
+		conditions: ['browser'],
 		alias: {
 			'@core': path.resolve(__dirname, 'src/core'),
 		}
@@ -15,5 +16,6 @@ export default defineConfig({
 			'test/vitest/**/*.test.ts',
 		],
 		globals: true,
+		setupFiles: ['test/vitest/setup.ts'],
 	},
 });

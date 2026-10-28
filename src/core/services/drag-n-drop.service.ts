@@ -1,3 +1,4 @@
+import { t } from '../util/i18n';
 export class DragnDropService{
 	private ModalService: any;
 	private DataService: any;
@@ -13,6 +14,7 @@ export class DragnDropService{
 	private TextGridParserService: any;
 	private LoadedMetaDataService: any;
 	private LevelService: any;
+	private DataSourceService: any;
 
 	private drandropBundles: any;
 	private bundleList: any;
@@ -83,7 +85,7 @@ export class DragnDropService{
 		}
 
 		if (bundles.length === 0) {
-			this.ModalService.open('views/error.html', 'No supported audio/video files found. Drop audio files (.wav, .mp3, .flac, .ogg, .m4a, .mp4, .webm), optionally paired with .TextGrid or _annot.json files.');
+			this.ModalService.open('views/error.html', t('msg.noSupportedFiles'));
 			return;
 		}
 
@@ -110,6 +112,7 @@ export class DragnDropService{
 	};
 
 	public resetToInitState() {
+		this.DataSourceService?.set('none');
 		delete this.drandropBundles;
 		this.drandropBundles = [];
 		delete this.bundleList;
@@ -182,7 +185,7 @@ export class DragnDropService{
 													this.DragnDropDataService.convertedBundles[i].annotation = parseMess;
 													this.convertDragnDropData(bundles, i + 1).then(() => { resolve(); });
 												}, (errMess) => {
-													this.ModalService.open('views/error.html', 'Error parsing TextGrid file: ' + errMess.status.message).then(() => { reject(); });
+													this.ModalService.open('views/error.html', t('msg.textGridParse') + errMess.status.message).then(() => { reject(); });
 												});
 											}
 										};
@@ -197,7 +200,7 @@ export class DragnDropService{
 									}
 								}
 							}, (errMess) => {
-								this.ModalService.open('views/error.html', 'Error decoding audio file: ' + errMess.status.message).then(() => { reject(); });
+								this.ModalService.open('views/error.html', t('msg.audioDecode') + errMess.status.message).then(() => { reject(); });
 							});
 						}
 					};
@@ -211,10 +214,11 @@ export class DragnDropService{
 		if (this.DragnDropDataService.convertedBundles[this.DragnDropDataService.sessionDefault].annotation !== undefined) {
 			annotation = this.DragnDropDataService.convertedBundles[this.DragnDropDataService.sessionDefault].annotation;
 		} else { annotation = {levels: [], links: []}; }
+		this.DataSourceService?.set('local');
 		this.ViewStateService.showDropZone = false;
 		this.ViewStateService.setState('loadingSaving');
 		this.ViewStateService.somethingInProgress = true;
-		this.ViewStateService.somethingInProgressTxt = 'Loading local File: ' + this.DragnDropDataService.convertedBundles[this.DragnDropDataService.sessionDefault].name;
+		this.ViewStateService.somethingInProgressTxt = t('progress.localFile') + this.DragnDropDataService.convertedBundles[this.DragnDropDataService.sessionDefault].name;
 		this.IoHandlerService.httpGetPath('configFiles/standalone_articConfig.json').then((resp) => {
 			this.ViewStateService.curPerspectiveIdx = 0;
 			this.ConfigProviderService.setVals(resp.data.EMUwebAppConfig);
@@ -223,7 +227,7 @@ export class DragnDropService{
 			validRes = this.ValidationService.validateJSO('articConfigSchema', this.ConfigProviderService.vals);
 			if (validRes === true) {
 				this.ConfigProviderService.curDbConfig = resp.data;
-				this.ViewStateService.somethingInProgressTxt = 'Parsing audio file...';
+				this.ViewStateService.somethingInProgressTxt = t('progress.parsingAudio');
 				this.ViewStateService.curViewPort.sS = 0;
 				this.ViewStateService.curViewPort.eS = this.SoundHandlerService.audioBuffer.length;
 				this.ViewStateService.curViewPort.selectS = -1;
@@ -249,15 +253,15 @@ export class DragnDropService{
 				this.ConfigProviderService.curDbConfig.levelDefinitions = levelDefs;
 				this.ViewStateService.setCurLevelAttrDefs(this.ConfigProviderService.curDbConfig.levelDefinitions);
 				this.ConfigProviderService.setPerspectivesOrder(this.ViewStateService.curPerspectiveIdx, lNames);
-				this.ViewStateService.somethingInProgressTxt = 'Parsing SSFF files...';
+				this.ViewStateService.somethingInProgressTxt = t('progress.parsingSsff');
 				validRes = this.ValidationService.validateJSO('annotationFileSchema', annotation);
 				if (validRes === true) {
 					this.DataService.setLinkData(annotation.links);
 					this.ViewStateService.setState('labeling');
 					this.ViewStateService.somethingInProgress = false;
-					this.ViewStateService.somethingInProgressTxt = 'Done!';
+					this.ViewStateService.somethingInProgressTxt = t('progress.done');
 				} else {
-					this.ModalService.open('views/error.html', 'Error validating annotation file: ' + JSON.stringify(validRes, null, 4)).then(() => {
+					this.ModalService.open('views/error.html', t('msg.annotInvalid') + JSON.stringify(validRes, null, 4)).then(() => {
 						this.resetToInitState();
 					});
 				}
@@ -269,7 +273,7 @@ export class DragnDropService{
 		}).catch((err) => {
 			console.error('Error loading standalone config:', err);
 			this.ViewStateService.somethingInProgress = false;
-			this.ModalService.open('views/error.html', 'Error loading configuration: ' + (err.message || err));
+			this.ModalService.open('views/error.html', t('msg.configLoad') + (err.message || err));
 		});
 	};
 }

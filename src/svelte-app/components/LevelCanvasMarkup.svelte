@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount, onDestroy } from 'svelte';
 	import { getViewportTick, getMarkupTick, invalidate, invalidateMarkup } from '../stores/app-state.svelte';
 	import {
@@ -9,7 +11,6 @@
 		historyService,
 		drawHelperService,
 	} from '../stores/services';
-	import { styles } from '../../core/util/styles';
 
 	let { levelName, idx }: { levelName: string; idx: number } = $props();
 
@@ -458,7 +459,7 @@
 
 		// highlight current click level
 		if (curLevel.name === viewStateService.getcurClickLevelName()) {
-			ctx.fillStyle = styles.colorTransparentGrey;
+			ctx.fillStyle = cs().color.tierActive;
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		}
 
@@ -487,9 +488,9 @@
 							posS = Math.round(viewStateService.getPos(ctx.canvas.width, cs.samplePoint) + sDist / 2) - 5;
 							posE = posS + 10;
 						}
-						ctx.fillStyle = styles.colorTransparentYellow;
+						ctx.fillStyle = cs().color.segmentSelected;
 						ctx.fillRect(posS, 0, posE - posS, ctx.canvas.height);
-						ctx.fillStyle = styles.colorWhite;
+						ctx.fillStyle = cs().color.boundary;
 					}
 				});
 			}
@@ -498,7 +499,7 @@
 		// draw preselected boundary
 		const item = viewStateService.getcurMouseItem();
 		if (curLevel.items.length > 0 && item !== undefined && segMId !== undefined && curLevel.name === viewStateService.getcurMouseLevelName()) {
-			ctx.fillStyle = styles.colorBlue;
+			ctx.fillStyle = cs().color.selectionEdge;
 			if (isFirst === true) {
 				if (viewStateService.getcurMouseLevelType() === 'SEGMENT') {
 					const firstItem = curLevel.items[0];
@@ -520,7 +521,7 @@
 					ctx.fillRect(posS + sDist / 2, 0, 3, ctx.canvas.height);
 				}
 			}
-			ctx.fillStyle = styles.colorWhite;
+			ctx.fillStyle = cs().color.boundary;
 		}
 
 		// draw cursor crosshair

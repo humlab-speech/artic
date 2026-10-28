@@ -1,4 +1,3 @@
-@use 'artic-design' as *;
 @use 'mixins' as *;
 
 .artic-aboutHint {
@@ -7,11 +6,11 @@
     right: 0;
     width: 400px;
     height: 100px;
-    background: var(--color-transparent-black);
-    border: 1px solid var(--color-white);
+    background: var(--sb-overlay);
+    border: 1px solid var(--sb-border-control);
     z-index: 99998;
     overflow:hidden;
-    color: var(--color-white);
+    color: var(--sb-text);
     -moz-border-radius: 10px 0px 10px 10px;
     -webkit-border-radius: 10px 0px 10px 10px;
     border-radius: 10px 0px 10px 10px;
@@ -32,21 +31,21 @@
         padding-top: 80px;
         width: 100%;
         height: 90%;
-        color: var(--color-white);
+        color: var(--sb-text);
         overflow:hidden;
         h1 {
           font-size: 2.75em;
           padding-bottom: 5px;
         }
       button {
-          color: var(--color-white);
+          color: var(--sb-text);
           background-color: transparent;
           padding: 10px;
           border-radius: 0;
-          border:1px solid var(--color-white);
+          border:1px solid var(--sb-border-control);
           &:hover{
-            color: var(--color-black);
-            background-color: var(--color-white);
+            color: var(--sb-text);
+            background-color: var(--sb-surface);
           }
       }
         .news {
@@ -55,7 +54,7 @@
             width: 60%;
             max-height: 80px;
             overflow: auto;
-            border: 1px solid var(--color-white);
+            border: 1px solid var(--sb-border-control);
         }
       > div {
         position: relative;
@@ -69,7 +68,7 @@
     }
     .artic-aboutHint-arrow {
         position: absolute;
-        color: var(--color-blue);
+        color: var(--sb-interactive-text);
         font-size: 200%;
         top: 40px;
         right: 8px;
@@ -78,10 +77,10 @@
     .artic-aboutHint-hidden {
         position: absolute;
         background: 
-          linear-gradient(to right, rgb(255,255,255), 2%, transparent),
-          linear-gradient(to left, rgb(255,255,255), 2%, transparent),
-          linear-gradient(to bottom, rgb(255,255,255), 2%, transparent),
-          linear-gradient(to top, rgb(255,255,255), 2%, transparent);
+          linear-gradient(to right, var(--sb-surface), 2%, transparent),
+          linear-gradient(to left, var(--sb-surface), 2%, transparent),
+          linear-gradient(to bottom, var(--sb-surface), 2%, transparent),
+          linear-gradient(to top, var(--sb-surface), 2%, transparent);
         top: 0;
         right: 0;
         width: 40px;
@@ -93,7 +92,7 @@
         top: 40%;
         text-align: center;
         width: 100%;
-        color: var(--color-grey);
+        color: var(--sb-text-muted);
         font-size: 200%;
         @include vendor-prefix(transform, "rotate(15deg)");
     }

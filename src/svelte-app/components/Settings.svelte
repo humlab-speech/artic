@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { tr } from '../stores/i18n.svelte';
+	import Button from './ui/Button.svelte';
+	import { icons } from './ui/icons';
 	import { getConfigTick } from '../stores/app-state.svelte';
 	import { viewStateService, soundHandlerService, mathHelperService, hierarchyLayoutService, configProviderService, standardFuncsService, dataService, modalService } from '../stores/services';
 	import { safeGetItem, safeSetItem } from '../../core/util/safe-storage';
@@ -86,7 +89,7 @@
 	}
 
 	function cssError(id: number, id2?: number) {
-		return (errorID[id] || (id2 !== undefined && errorID[id2])) ? 'background: #f00' : '';
+		return (errorID[id] || (id2 !== undefined && errorID[id2])) ? 'sb-field-invalid' : '';
 	}
 
 	function saveSettings() {
@@ -103,6 +106,7 @@
 			modalVals.preEmphasisFilterFactor,
 			modalVals.heatMapColorAnchors,
 			modalVals.invert,
+			true,
 		);
 		viewStateService.setOsciSettings(osciChannel);
 
@@ -153,19 +157,19 @@
 
 <div class="artic-text">
 	{#if hasHierarchy}
-	<h1>Hierarchy Settings</h1>
-	<span>Show hierarchy path canvas:
+	<h1>{tr('settings.hierarchy')}</h1>
+	<span>{tr('settings.showPathCanvas')}
 		<input type="checkbox" bind:checked={hierarchySettings.showHierarchyPathCanvas} />
 	</span>
 
-	<h2>Visible Path</h2>
+	<h2>{tr('settings.visiblePath')}</h2>
 	<select bind:value={hierarchySettings.paths.selected} onchange={getCurVisAttributes}>
 		{#each hierarchySettings.paths.possibleAsStr as pathStr}
 			<option value={pathStr}>{pathStr}</option>
 		{/each}
 	</select>
 
-	<h2>Visible Attribute Definitions</h2>
+	<h2>{tr('settings.visibleAttrDefs')}</h2>
 	{#each [...(hierarchySettings.paths.possible[getSelHierarchyPathIdx()] || [])].reverse() as levelName}
 		<div class="artic-nav-wrap">
 			{levelName}:
@@ -178,60 +182,60 @@
 	{/each}
 	{/if}
 
-	<h1>Level Canvas Settings</h1>
-	<span>Font scaling factor:
+	<h1>{tr('settings.levelCanvas')}</h1>
+	<span>{tr('settings.fontScaling')}
 		<input type="range" bind:value={levelCanvasesFontScalingFactor} min="1" max="200" />
 		{levelCanvasesFontScalingFactor}%
 	</span>
 
-	<h1>OSCI Settings</h1>
-	<h2>Current channel</h2>
+	<h1>{tr('settings.osci')}</h1>
+	<h2>{tr('settings.channel')}</h2>
 	<select bind:value={osciChannel}>
 		{#each osciAvailableChannels as ch}
 			<option value={ch}>{ch}</option>
 		{/each}
 	</select>
 
-	<h1>SPEC Settings</h1>
-	<h2>View Range (Hz)</h2>
-	From: <input type="text" style={cssError(2, 4)} bind:value={modalVals.rangeFrom} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} />
-	To: <input type="text" style={cssError(1, 3)} bind:value={modalVals.rangeTo} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /><br />
-	{#if errorID[1]}<div><b style="color:#f00">Error:</b> Upper Range is bigger than {upperBoundary}</div>{/if}
-	{#if errorID[2]}<div><b style="color:#f00">Error:</b> Only positive Integers are allowed.</div>{/if}
-	{#if errorID[3]}<div><b style="color:#f00">Error:</b> Only Integers allowed inside 'To'.</div>{/if}
-	{#if errorID[4]}<div><b style="color:#f00">Error:</b> Only Integers allowed inside 'From'.</div>{/if}
+	<h1>{tr('settings.spec')}</h1>
+	<h2>{tr('settings.viewRange')}</h2>
+	{tr('settings.from')} <input type="text" class={cssError(2, 4)} bind:value={modalVals.rangeFrom} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} />
+	{tr('settings.to')} <input type="text" class={cssError(1, 3)} bind:value={modalVals.rangeTo} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /><br />
+	{#if errorID[1]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errUpper', { n: upperBoundary })}</div>{/if}
+	{#if errorID[2]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errPositiveInt')}</div>{/if}
+	{#if errorID[3]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errIntTo')}</div>{/if}
+	{#if errorID[4]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errIntFrom')}</div>{/if}
 
-	<h2>Window Size (seconds)</h2>
-	<span>resulting number of samples <em>{modalVals._windowSizeInSamples}</em> zero-padded to <em>{modalVals._fftN} (min. = 512)</em></span>
-	<input type="text" style={cssError(6)} bind:value={modalVals.windowSizeInSecs} onkeyup={() => { calcWindowSizeVals(); checkSpectroSettings(); }} onfocus={onFocus} onblur={onBlur} /><br />
-	{#if errorID[6]}<div><b style="color:#f00">Error:</b> Only Floats are allowed.</div>{/if}
+	<h2>{tr('settings.windowSize')}</h2>
+	<span>{tr('settings.windowInfo', { n: modalVals._windowSizeInSamples, fft: modalVals._fftN })}</span>
+	<input type="text" class={cssError(6)} bind:value={modalVals.windowSizeInSecs} onkeyup={() => { calcWindowSizeVals(); checkSpectroSettings(); }} onfocus={onFocus} onblur={onBlur} /><br />
+	{#if errorID[6]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errFloat')}</div>{/if}
 
-	<h2>Dynamic Range for Maximum (dB)</h2>
-	<input type="text" style={cssError(5)} bind:value={modalVals.dynamicRange} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /><br />
-	{#if errorID[5]}<div><b style="color:#f00">Error:</b> Only Integers are allowed.</div>{/if}
+	<h2>{tr('settings.dynamicRange')}</h2>
+	<input type="text" class={cssError(5)} bind:value={modalVals.dynamicRange} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /><br />
+	{#if errorID[5]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errInt')}</div>{/if}
 
-	<h2>Pre-emphasis filter factor</h2>
-	<span>resulting high pass filter function: <em>ŝ(k) = s(k)-{modalVals.preEmphasisFilterFactor}*s(k-1)</em></span>
-	<input type="text" style={cssError(7)} bind:value={modalVals.preEmphasisFilterFactor} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /><br />
-	{#if errorID[7]}<div><b style="color:#f00">Error:</b> Only Floats are allowed.</div>{/if}
+	<h2>{tr('settings.preEmph')}</h2>
+	<span>{tr('settings.preEmphInfo')} <em>ŝ(k) = s(k)-{modalVals.preEmphasisFilterFactor}*s(k-1)</em></span>
+	<input type="text" class={cssError(7)} bind:value={modalVals.preEmphasisFilterFactor} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /><br />
+	{#if errorID[7]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errFloat')}</div>{/if}
 
-	<h2>Window Function</h2>
+	<h2>{tr('settings.windowFunction')}</h2>
 	<select bind:value={selWindowName}>
 		{#each windowOptions as opt}
 			<option value={opt}>{opt}</option>
 		{/each}
 	</select>
 
-	<h2>Invert</h2>
-	<span>Invert colors of spectrogram: <input type="checkbox" bind:checked={modalVals.invert} /></span>
+	<h2>{tr('settings.invert')}</h2>
+	<span>{tr('settings.invertText')} <input type="checkbox" bind:checked={modalVals.invert} /></span>
 
-	<h2>Color Options</h2>
-	<span>Draw spectrogram in heat map colors: <input type="checkbox" bind:checked={modalVals.drawHeatMapColors} /></span>
-	<table class="artic-modalTable" style={cssError(8)}><tbody>
-		<tr><th></th><th>red</th><th>green</th><th>blue</th><th>resulting color</th></tr>
+	<h2>{tr('settings.colorOptions')}</h2>
+	<span>{tr('settings.heatMap')} <input type="checkbox" bind:checked={modalVals.drawHeatMapColors} /></span>
+	<table class="artic-modalTable {cssError(8)}"><tbody>
+		<tr><th></th><th>{tr('settings.red')}</th><th>{tr('settings.green')}</th><th>{tr('settings.blue')}</th><th>{tr('settings.resulting')}</th></tr>
 		{#each [0, 1, 2] as anchorIdx}
 			<tr>
-				<td>{['First', 'Second', 'Third'][anchorIdx]} spectrogram color anchor:</td>
+				<td>{tr(['settings.anchor1', 'settings.anchor2', 'settings.anchor3'][anchorIdx])}</td>
 				<td>r: <input type="text" class="artic-rgbTextInput" bind:value={modalVals.heatMapColorAnchors[anchorIdx][0]} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /></td>
 				<td>g: <input type="text" class="artic-rgbTextInput" bind:value={modalVals.heatMapColorAnchors[anchorIdx][1]} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /></td>
 				<td>b: <input type="text" class="artic-rgbTextInput" bind:value={modalVals.heatMapColorAnchors[anchorIdx][2]} onkeyup={checkSpectroSettings} onfocus={onFocus} onblur={onBlur} /></td>
@@ -239,10 +243,10 @@
 			</tr>
 		{/each}
 	</tbody></table>
-	{#if errorID[8]}<div><b style="color:#f00">Error:</b> Only Integers allowed.</div>{/if}
+	{#if errorID[8]}<div><b class="sb-field-error">{tr('settings.error')}</b> {tr('settings.errInt')}</div>{/if}
 </div>
 
 <div class="artic-inline-modal-footer">
-	<button class="artic-mini-btn" onclick={reset}>Cancel</button>
-	<button id="artic-modal-save" class="artic-mini-btn" onclick={saveSettings}>Save</button>
+	<Button label={tr('dialog.cancel')} onclick={reset} />
+	<Button id="artic-modal-save" variant="primary" icon={icons.save} label={tr('dataSelector.save')} onclick={saveSettings} />
 </div>

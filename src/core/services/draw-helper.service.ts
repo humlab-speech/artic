@@ -1,5 +1,6 @@
+import { getCanvasStyle } from '../theme/canvas-style';
+const cs = getCanvasStyle;
 import { IOsciPeaks } from '../interfaces/osci-peaks.interface';
-import { styles } from '../util/styles';
 
 export class DrawHelperService{
 
@@ -354,7 +355,7 @@ export class DrawHelperService{
 
 			var startPeakWinIdx = ssT * pps;
 
-			ctx.strokeStyle = styles.colorWhite;
+			ctx.strokeStyle = cs().color.signal;
 			
 			var peakIdx = Math.round(startPeakWinIdx);
 			ctx.beginPath();
@@ -399,7 +400,7 @@ export class DrawHelperService{
 			// check if envelope is to be drawn
 			if (allPeakVals.minPeaks && allPeakVals.maxPeaks && allPeakVals.samplePerPx >= 1) {
 				// draw envelope
-				ctx.strokeStyle = styles.colorWhite;
+				ctx.strokeStyle = cs().color.signal;
 				
 				ctx.beginPath();
 				yMax = ((allPeakVals.maxMaxPeak - allPeakVals.maxPeaks[0]) / (allPeakVals.maxMaxPeak - allPeakVals.minMinPeak)) * canvas.height;
@@ -435,8 +436,8 @@ export class DrawHelperService{
 				var hDbS = (1 / allPeakVals.samplePerPx) / 2; // half distance between samples
 				var sNr = this.ViewStateService.curViewPort.sS;
 				// over sample exact
-				ctx.strokeStyle = styles.colorWhite;
-				ctx.fillStyle = styles.colorWhite;
+				ctx.strokeStyle = cs().color.signal;
+				ctx.fillStyle = cs().color.signal;
 				// ctx.beginPath();
 				if (this.ViewStateService.curViewPort.sS === 0) {
 					ctx.moveTo(hDbS, (allPeakVals.samples[0] - allPeakVals.minSample) / (allPeakVals.maxSample - allPeakVals.minSample) * canvas.height);
@@ -481,8 +482,8 @@ export class DrawHelperService{
 
 		if (this.ConfigProviderService.vals.restrictions.drawZeroLine) {
 			// draw zero line
-			ctx.strokeStyle = styles.colorBlue;
-			ctx.fillStyle = styles.colorBlue;
+			ctx.strokeStyle = cs().color.zeroLine;
+			ctx.fillStyle = cs().color.zeroLine;
 
 			var zeroLineY;
 
@@ -523,7 +524,7 @@ export class DrawHelperService{
 		}
 
 		if (this.ViewStateService.movingBoundary) {
-			ctx.fillStyle = styles.colorBlue;
+			ctx.fillStyle = cs().color.selectionEdge;
 			var p = Math.round(this.ViewStateService.getPos(ctx.canvas.width, this.ViewStateService.movingBoundarySample));
 			if (this.ViewStateService.getcurMouseisLast()) {
 				ctx.fillRect(p + sDist, 0, 1, ctx.canvas.height);
@@ -541,7 +542,7 @@ export class DrawHelperService{
 
 	public drawCurViewPortSelected(ctx, drawTimeAndSamples) {
 
-		var fontSize = parseInt(styles.fontSmallSize.slice(0, -2));
+		var fontSize = cs().size.sm;
 		var xOffset, sDist, space, scaleX;
 		sDist = this.ViewStateService.getSampleDist(ctx.canvas.width);
 
@@ -557,7 +558,7 @@ export class DrawHelperService{
 
 		if (posS === posE) {
 
-			ctx.fillStyle = styles.colorWhite;
+			ctx.fillStyle = cs().color.text;
 			ctx.fillRect(posS + xOffset, 0, 2, ctx.canvas.height);
 
 			if (drawTimeAndSamples) {
@@ -573,17 +574,17 @@ export class DrawHelperService{
 						this.ViewStateService.curViewPort.selectS, 
 						this.MathHelperService.roundToNdigitsAfterDecPoint(this.ViewStateService.curViewPort.selectS / this.SoundHandlerService.audioBuffer.sampleRate, 6), 
 						fontSize, 
-						styles.fontSmallFamily, 
+						cs().family.data, 
 						posE + 5, 
 						0, 
-						styles.colorWhite, 
+						cs().color.text, 
 						true);
 				}
 			}
 		} else {
-			ctx.fillStyle = styles.colorTransparentLightGrey;
+			ctx.fillStyle = cs().color.selectionFill;
 			ctx.fillRect(posS, 0, posE - posS, ctx.canvas.height);
-			ctx.strokeStyle = styles.colorWhite;
+			ctx.strokeStyle = cs().color.selectionEdge;
 			ctx.beginPath();
 			ctx.moveTo(posS, 0);
 			ctx.lineTo(posS, ctx.canvas.height);
@@ -605,14 +606,14 @@ export class DrawHelperService{
 					this.ViewStateService.curViewPort.selectS, 
 					this.MathHelperService.roundToNdigitsAfterDecPoint(this.ViewStateService.curViewPort.selectS / this.SoundHandlerService.audioBuffer.sampleRate, 6), 
 					fontSize, 
-					styles.fontSmallFamily, 
+					cs().family.data, 
 					posS - space - 5, 
 					0, 
-					styles.colorWhite, 
+					cs().color.text, 
 					false);
 
 				// end values
-				this.FontScaleService.drawUndistortedTextTwoLines(ctx, this.ViewStateService.curViewPort.selectE, this.MathHelperService.roundToNdigitsAfterDecPoint(this.ViewStateService.curViewPort.selectE / this.SoundHandlerService.audioBuffer.sampleRate, 6), fontSize, styles.fontSmallFamily, posE + 5, 0, styles.colorWhite, true);
+				this.FontScaleService.drawUndistortedTextTwoLines(ctx, this.ViewStateService.curViewPort.selectE, this.MathHelperService.roundToNdigitsAfterDecPoint(this.ViewStateService.curViewPort.selectE / this.SoundHandlerService.audioBuffer.sampleRate, 6), fontSize, cs().family.data, posE + 5, 0, cs().color.text, true);
 				// dur values
 				// check if space
 				space = this.getScale(ctx, this.MathHelperService.roundToNdigitsAfterDecPoint((this.ViewStateService.curViewPort.selectE - this.ViewStateService.curViewPort.selectS) / this.SoundHandlerService.audioBuffer.sampleRate, 6), scaleX);
@@ -621,7 +622,7 @@ export class DrawHelperService{
 					var str1 = this.ViewStateService.curViewPort.selectE - this.ViewStateService.curViewPort.selectS - 1;
 					var str2 = this.MathHelperService.roundToNdigitsAfterDecPoint(((this.ViewStateService.curViewPort.selectE - this.ViewStateService.curViewPort.selectS) / this.SoundHandlerService.audioBuffer.sampleRate), 6);
 					space = this.getScaleWidth(ctx, str1, str2, scaleX);
-					this.FontScaleService.drawUndistortedTextTwoLines(ctx, str1, str2, fontSize, styles.fontSmallFamily, posS + (posE - posS) / 2 - space / 2, 0, styles.colorWhite, false);
+					this.FontScaleService.drawUndistortedTextTwoLines(ctx, str1, str2, fontSize, cs().family.data, posS + (posE - posS) / 2 - space / 2, 0, cs().color.text, false);
 				}
 			}
 
@@ -636,8 +637,8 @@ export class DrawHelperService{
 	 * on canvases where the mouse is currently not hovering over
 	 */
 	public drawCrossHairX(ctx, mouseX){
-		ctx.strokeStyle = styles.colorCursor;
-		ctx.fillStyle = styles.colorCursor;
+		ctx.strokeStyle = cs().color.cursor;
+		ctx.fillStyle = cs().color.cursor;
 		ctx.beginPath();
 		ctx.moveTo(mouseX, 0);
 		ctx.lineTo(mouseX, ctx.canvas.height);
@@ -651,10 +652,10 @@ export class DrawHelperService{
 	public drawCrossHairs(ctx, mouseX, mouseY, min, max, unit, trackname) {
 		// console.log(MathHelperService.roundToNdigitsAfterDecPoint(min, round))
 		if (this.ConfigProviderService.vals.restrictions.drawCrossHairs) {
-			var fontSize = parseInt(styles.fontSmallSize.slice(0, -2));
+			var fontSize = cs().size.sm;
 			// ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-			ctx.strokeStyle = styles.colorCursor;
-			ctx.fillStyle = styles.colorCursor;
+			ctx.strokeStyle = cs().color.cursor;
+			ctx.fillStyle = cs().color.cursor;
 
 			// see if Chrome -> dashed line
 			//if (navigator.vendor === 'Google Inc.') {
@@ -666,7 +667,7 @@ export class DrawHelperService{
 			//}
 
 			// draw frequency / sample / time
-			ctx.font = (styles.fontSmallSize + 'px ' + styles.fontSmallFamily);
+			ctx.font = (cs().size.sm + 'px ' + cs().family.data);
 			var mouseFreq = this.MathHelperService.roundToNdigitsAfterDecPoint(max - mouseY / ctx.canvas.height * max, 2); // SIC only uses max
 			var tW = ctx.measureText(mouseFreq + unit).width * this.FontScaleService.scaleX;
 			var tH = fontSize * this.FontScaleService.scaleY;
@@ -681,8 +682,8 @@ export class DrawHelperService{
 			if (max !== undefined || min !== undefined) {
 				if (trackname === 'OSCI') {
 					// no horizontal values
-					ctx.strokeStyle = styles.colorCursor;
-					ctx.fillStyle = styles.colorCursor;
+					ctx.strokeStyle = cs().color.cursor;
+					ctx.fillStyle = cs().color.cursor;
 					ctx.beginPath();
 					ctx.moveTo(mouseX, 0);
 					ctx.lineTo(mouseX, ctx.canvas.height);
@@ -692,19 +693,19 @@ export class DrawHelperService{
 						ctx,
 						mouseFreq + unit,
 						fontSize,
-						styles.fontSmallFamily,
+						cs().family.data,
 						5,
 						y,
-						styles.colorCursor,
+						cs().color.cursor,
 						true);
 					this.FontScaleService.drawUndistortedText(
 						ctx,
 						mouseFreq + unit,
 						fontSize,
-						styles.fontSmallFamily,
+						cs().family.data,
 						ctx.canvas.width - tW,
 						y,
-						styles.colorCursor,
+						cs().color.cursor,
 						true);
 
 					ctx.beginPath();
@@ -724,19 +725,19 @@ export class DrawHelperService{
 						ctx,
 						mouseFreq + unit,
 						fontSize,
-						styles.fontSmallFamily,
+						cs().family.data,
 						5,
 						y,
-						styles.colorCursor,
+						cs().color.cursor,
 						true);
 					this.FontScaleService.drawUndistortedText(
 						ctx,
 						mouseFreq + unit,
 						fontSize,
-						styles.fontSmallFamily,
+						cs().family.data,
 						ctx.canvas.width - 5 - tW,
 						y,
-						styles.colorCursor,
+						cs().color.cursor,
 						true);
 					ctx.beginPath();
 					ctx.moveTo(0, mouseY);
@@ -754,10 +755,10 @@ export class DrawHelperService{
 				s1,
 				s2,
 				fontSize,
-				styles.fontSmallFamily,
+				cs().family.data,
 				mouseX + 5,
 				0,
-				styles.colorCursor,
+				cs().color.cursor,
 				true);
 		}
 	};
@@ -773,15 +774,15 @@ export class DrawHelperService{
 
 	public drawMinMaxAndName(ctx, trackName, min, max, round) {
 		// ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		ctx.strokeStyle = styles.colorBlue;
-		ctx.fillStyle = styles.colorBlue;
+		ctx.strokeStyle = cs().color.textMuted;
+		ctx.fillStyle = cs().color.textMuted;
 
-		var fontSize = parseInt(styles.fontSmallSize.slice(0, -2));
+		var fontSize = cs().size.sm;
 
 		// var scaleX = ctx.canvas.width / ctx.canvas.offsetWidth;
 		var scaleY = ctx.canvas.height / ctx.canvas.offsetHeight;
 
-		var smallFontSize = parseInt(styles.fontSmallSize.slice(0, -2)) * 3 / 4;
+		var smallFontSize = cs().size.sm * 3 / 4;
 		var th = smallFontSize * scaleY;
 
 		// draw corner pointers
@@ -795,16 +796,16 @@ export class DrawHelperService{
 
 		// draw trackName
 		if (trackName !== '') {
-			this.FontScaleService.drawUndistortedText(ctx, trackName, fontSize, styles.fontSmallFamily, 0, ctx.canvas.height / 2 - fontSize * scaleY / 2, styles.colorBlue, true);
+			this.FontScaleService.drawUndistortedText(ctx, trackName, fontSize, cs().family.data, 0, ctx.canvas.height / 2 - fontSize * scaleY / 2, cs().color.textMuted, true);
 		}
 
 		// draw min/max vals
 		if (max !== undefined) {
-			this.FontScaleService.drawUndistortedText(ctx, 'max: ' + this.MathHelperService.roundToNdigitsAfterDecPoint(max, round), smallFontSize, styles.fontSmallFamily, 5, 5, styles.colorBlue, true);
+			this.FontScaleService.drawUndistortedText(ctx, 'max: ' + this.MathHelperService.roundToNdigitsAfterDecPoint(max, round), smallFontSize, cs().family.data, 5, 5, cs().color.textMuted, true);
 		}
 		// draw min/max vals
 		if (min !== undefined) {
-			this.FontScaleService.drawUndistortedText(ctx, 'min: ' + this.MathHelperService.roundToNdigitsAfterDecPoint(min, round), smallFontSize, styles.fontSmallFamily, 5, ctx.canvas.height - th - 5, styles.colorBlue, true);
+			this.FontScaleService.drawUndistortedText(ctx, 'min: ' + this.MathHelperService.roundToNdigitsAfterDecPoint(min, round), smallFontSize, cs().family.data, 5, ctx.canvas.height - th - 5, cs().color.textMuted, true);
 		}
 	};
 
@@ -812,11 +813,11 @@ export class DrawHelperService{
 	 *
 	 */
 	public drawViewPortTimes(ctx) {
-		ctx.strokeStyle = styles.colorWhite;
-		ctx.fillStyle = styles.colorWhite;
-		ctx.font = (styles.fontSmallSize + ' ' + styles.fontSmallFamily);
+		ctx.strokeStyle = cs().color.textMuted;
+		ctx.fillStyle = cs().color.textMuted;
+		ctx.font = (cs().size.sm + 'px ' + cs().family.data);
 
-		var fontSize = parseInt(styles.fontSmallSize.slice(0, -2));
+		var fontSize = cs().size.sm;
 
 		// lines to corners
 		ctx.beginPath();
@@ -834,9 +835,9 @@ export class DrawHelperService{
 			//draw time and sample nr
 			sTime = this.MathHelperService.roundToNdigitsAfterDecPoint(this.ViewStateService.curViewPort.sS / this.SoundHandlerService.audioBuffer.sampleRate, 6);
 			eTime = this.MathHelperService.roundToNdigitsAfterDecPoint(this.ViewStateService.curViewPort.eS / this.SoundHandlerService.audioBuffer.sampleRate, 6);
-			this.FontScaleService.drawUndistortedTextTwoLines(ctx, this.ViewStateService.curViewPort.sS, sTime, fontSize, styles.fontSmallFamily, 5, 0, styles.colorWhite, true);
+			this.FontScaleService.drawUndistortedTextTwoLines(ctx, this.ViewStateService.curViewPort.sS, sTime, fontSize, cs().family.data, 5, 0, cs().color.textMuted, true);
 			space = this.getScaleWidth(ctx, this.ViewStateService.curViewPort.eS, eTime, scaleX);
-			this.FontScaleService.drawUndistortedTextTwoLines(ctx, this.ViewStateService.curViewPort.eS, eTime, fontSize, styles.fontSmallFamily, ctx.canvas.width - space - 5, 0, styles.colorWhite, false);
+			this.FontScaleService.drawUndistortedTextTwoLines(ctx, this.ViewStateService.curViewPort.eS, eTime, fontSize, cs().family.data, ctx.canvas.width - space - 5, 0, cs().color.textMuted, false);
 		}
 	};
 

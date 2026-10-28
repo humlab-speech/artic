@@ -1,22 +1,22 @@
-@use 'artic-design' as *;
-
+// Legacy font classes mapped to the typography roles in core/theme/tokens.ts.
+// Deprecated: Phase 6 replaces them with .sb-* roles from base.scss.
 .artic-font-small {
-    font-family: $font-small-family;
-    font-size: $font-small-size;
-    font-weight: $font-small-weight;
+    font-family: var(--sb-font-ui);
+    font-size: var(--sb-size-sm);
+    font-weight: var(--sb-weight-medium);
 }
 .artic-font-large {
-    font-family: $font-large-family;
-    font-size: $font-large-size;
-    font-weight: $font-large-weight;
+    font-family: var(--sb-font-ui);
+    font-size: var(--sb-size-md);
+    font-weight: var(--sb-weight-medium);
 }
 .artic-font-code {
-    font-family: $font-code-family;
-    font-size: $font-code-size;
-    font-weight: $font-code-weight;
+    font-family: var(--sb-font-code);
+    font-size: var(--sb-size-sm);
+    font-weight: var(--sb-weight-regular);
 }
 .artic-font-input {
-    font-family: $font-input-family;
-    font-size: $font-input-size;
-    font-weight: $font-input-weight;
+    font-family: var(--sb-font-data);
+    font-size: calc(var(--sb-noto-scale) * var(--sb-size-md));
+    font-weight: var(--sb-weight-regular);
 }

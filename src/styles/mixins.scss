@@ -1,6 +1,9 @@
 // scss mixins used by Artic
 @use 'sass:list';
 
+// Keep in sync with motion.period in src/core/theme/tokens.ts
+$sb-motion-period: 400;
+
 @mixin vendor-prefix($name, $argument) {
   -webkit-#{$name}: #{$argument};
   -ms-#{$name}: #{$argument};

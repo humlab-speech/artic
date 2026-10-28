@@ -28,6 +28,8 @@ import { configProviderService } from '../../core/services/config-provider.servi
 import { modalService } from '../../core/services/modal.service';
 import { wavParserService } from '../../core/services/wav-parser.service';
 
+import { dataSourceService } from '../../core/services/data-source.service';
+
 // Tier 3
 import { linkService } from '../../core/services/link.service';
 import { ssffDataService } from '../../core/services/ssff-data.service';
@@ -82,6 +84,7 @@ export {
 	audioResamplerService,
 	viewStateService,
 	configProviderService,
+	dataSourceService,
 	modalService,
 	wavParserService,
 	linkService,
@@ -105,7 +108,8 @@ export {
 	handleGlobalKeystrokesService,
 };
 
-import { invalidate, invalidateConfig } from './app-state.svelte';
+import { invalidate, invalidateConfig, invalidateMarkup } from './app-state.svelte';
+import { themeService } from '../../core/services/theme.service';
 import { setPostUpdate } from '../../core/util/schedule-update';
 
 let initialized = false;
@@ -118,6 +122,9 @@ export function initServices() {
 	// This replaces AngularJS's $rootScope.$apply() digest cycle
 	setPostUpdate(() => invalidate());
 
+	// Canvases read the palette per draw; redraw everything when the theme flips
+	themeService.onChange(() => { invalidate(); invalidateMarkup(); });
+
 	// Tier 1
 	audioResamplerService.initDeps({ BrowserDetectorService: browserDetectorService });
 	viewStateService.initDeps({
@@ -128,6 +135,7 @@ export function initServices() {
 
 	// Tier 2
 	configProviderService.initDeps({ ViewStateService: viewStateService });
+	dataSourceService.initDeps({ ConfigProviderService: configProviderService });
 	modalService.initDeps({ ArrayHelperService: arrayHelperService, ViewStateService: viewStateService });
 	wavParserService.initDeps({ AudioResamplerService: audioResamplerService, ViewStateService: viewStateService });
 
@@ -254,10 +262,12 @@ export function initServices() {
 		TextGridParserService: textGridParserService,
 		LoadedMetaDataService: loadedMetaDataService,
 		LevelService: levelService,
+		DataSourceService: dataSourceService,
 	});
 
 	// Tier 9
 	appStateService.initDeps({
+		DataSourceService: dataSourceService,
 		DragnDropService: dragnDropService,
 		DragnDropDataService: dragnDropDataService,
 		ViewStateService: viewStateService,
@@ -304,6 +314,7 @@ export function initServices() {
 		AnagestService: anagestService,
 		DbObjLoadSaveService: dbObjLoadSaveService,
 		BrowserDetectorService: browserDetectorService,
+		DataSourceService: dataSourceService,
 	});
 
 	// Auto-invalidate Svelte state when key service methods are called from async callbacks.

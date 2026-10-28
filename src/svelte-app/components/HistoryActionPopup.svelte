@@ -11,11 +11,11 @@
 		position: absolute;
 		top: 4px;
 		right: 4px;
-		background: rgba(0, 0, 0, 0.8);
-		color: #0f0;
+		background: var(--sb-surface-3);
+		color: var(--sb-text);
 		padding: 4px 8px;
 		border-radius: 4px;
-		font-size: 12px;
+		font-size: var(--sb-size-xs);
 		z-index: 50;
 		pointer-events: none;
 	}

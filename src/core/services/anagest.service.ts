@@ -1,3 +1,4 @@
+import { t } from '../util/i18n';
 export class AnagestService {
 	// Dependencies — set via initDeps()
 	ViewStateService!: any;
@@ -24,7 +25,7 @@ export class AnagestService {
 		// precheck if there are items in selection
 		var itemInSel = this.ViewStateService.getItemsInSelection(this.DataService.data.levels);
 		if (itemInSel.length !== 0) {
-			return this.ModalService.open('views/error.html', 'There are already events in the selected area! This is not permitted...').then(() => {
+			return this.ModalService.open('views/error.html', t('msg.eventsInArea')).then(() => {
 				return Promise.reject();
 			});
 		}
@@ -42,7 +43,7 @@ export class AnagestService {
 		var vCol = this.SsffDataService.getColumnOfTrack(vTr.name, vTr.columnName);
 
 		if (col.length !== 1 || vCol.length !== 1) {
-			return this.ModalService.open('views/error.html', 'UPS... the column length of of one of the tracks is != 1 this means something is badly configured in the DB!!!').then(() => {
+			return this.ModalService.open('views/error.html', t('msg.badColumnLength')).then(() => {
 				return Promise.reject();
 			});
 		}
@@ -334,8 +335,8 @@ export class AnagestService {
 				return ap;
 			});
 		} else if (anavv.length === 0) {
-			return this.ModalService.open('views/error.html', 'Could not find any values that step over the threshold!!').then(() => {
-				return Promise.reject('Could not find any values that step over the threshold!!');
+			return this.ModalService.open('views/error.html', t('msg.noThresholdValues')).then(() => {
+				return Promise.reject(t('msg.noThresholdValues'));
 			});
 		} else {
 			var ap = vz[anavv[0]];

@@ -1,5 +1,7 @@
 export class LoadedMetaDataService {
 	public ValidationService: any;
+	/** Set after a successful login during connect; shown in the header menu. */
+	public currentUser: string = '';
 
 	private uniqSessionList;
 	private bundleList;
@@ -137,6 +139,7 @@ export class LoadedMetaDataService {
 		this.bundleList = [];
 		this.curBndl = {};
 		this.rendOptBndlList = {};
+		this.currentUser = '';
 	}
 }
 
