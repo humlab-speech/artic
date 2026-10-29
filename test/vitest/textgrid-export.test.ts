@@ -39,3 +39,22 @@ describe('toTextGrid (Praat-valid output)', () => {
 		expect(xmax[2]).toBe(xmin[3]);
 	});
 });
+
+describe('TextGrid round trip', () => {
+	it('re-imports exported labels and boundaries within one sample', () => {
+		const sr = 44100;
+		const levels = [{ name: 'w', type: 'SEGMENT', items: [
+			{ sampleStart: 0, sampleDur: 999, labels: [{ value: 'a' }] },
+			{ sampleStart: 1000, sampleDur: 1999, labels: [{ value: 'b' }] } ] },
+			{ name: 'p', type: 'EVENT', items: [{ samplePoint: 1500, labels: [{ value: 'x' }] }] }];
+		const tg = build(levels, sr * 3, sr);
+		const g: any = { postMessage() {} };
+		new (TextGridParserWorker as any)(function () {}).workerInit(g);
+		const res = g.toJSO(tg, 'f.wav', 'f', sr);
+		const seg = res.levels.find((l: any) => l.name === 'w');
+		expect(seg.items.map((i: any) => i.labels[0].value)).toEqual(['a', 'b']);
+		expect(Math.abs(seg.items[1].sampleStart - 1000)).toBeLessThanOrEqual(1);
+		const pt = res.levels.find((l: any) => l.name === 'p');
+		expect(Math.abs(pt.items[0].samplePoint - 1500)).toBeLessThanOrEqual(1);
+	});
+});
