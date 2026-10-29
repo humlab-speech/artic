@@ -203,6 +203,8 @@ TextGridParserWorker.prototype = {
 		 */
 		global.toTextGrid = function (levelData, buffLength, sampleRate) {
 
+			// ITEM levels have no time information and cannot be represented in a TextGrid
+			levelData = levelData.filter(function (l) { return l.type === 'SEGMENT' || l.type === 'EVENT'; });
 			var tG = '';
 			var q = function (v) { return String(v === undefined ? '' : v).replace(/"/g, '""'); }; // Praat escapes " by doubling
 			var nl = '\n';

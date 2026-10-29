@@ -27,6 +27,11 @@ describe('toTextGrid (Praat-valid output)', () => {
 		expect(tg).toContain('name = "a""b"');
 		expect(tg).toContain('text = "x""y"');
 	});
+	it('skips ITEM levels and sizes the grid by exported tiers', () => {
+		const out = build([{ name: 'h', type: 'ITEM', items: [{ id: 1, labels: [{ value: 'x' }] }] }, ...levels], 44100, 44100);
+		expect(out).toContain('size = 2');
+		expect(out).not.toContain('name = "h"');
+	});
 	it('tiles intervals contiguously', () => {
 		const xmin = [...tg.matchAll(/xmin = (\S+)/g)].map(m => m[1]);
 		const xmax = [...tg.matchAll(/xmax = (\S+)/g)].map(m => m[1]);
