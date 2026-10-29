@@ -14,7 +14,7 @@
 {#if chrome !== 'toolbar'}
 <header class="sb-header">
 	<div class="sb-header-left">{#if chrome === 'full'}<Logo disabled={atStart} onclick={closeAll} />{/if}</div>
-	<div class="sb-header-center"><DataSelector /></div>
+	<div class="sb-header-center">{#if !atStart}<DataSelector />{/if}</div>
 	<div class="sb-header-right"><HeaderMenu /></div>
 </header>
 {/if}
