@@ -30,12 +30,12 @@
 
 <div class="artic-modal-wrap">
 	<div class="artic-modal-header-large artic-modal-header">
-		<h3 id="modalHeading">Download {filename}</h3>
+		<h3 id="modalHeading">{tr('dialog.downloadTitle')}</h3>
 	</div>
 	<div class="artic-modal-body">
 		<div class="artic-text">
-			<div>Do you wish to download "{filename}"?</div>
-			<pre class="artic-exportdata">{JSON.stringify(content, null, 2)}</pre>
+			<div>{tr('dialog.downloadConfirm')}</div>
+			<div><strong>{filename}</strong></div>
 		</div>
 	</div>
 	<div class="artic-modal-footer">

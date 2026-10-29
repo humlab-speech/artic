@@ -86,6 +86,8 @@
 		"ok": "OK",
 		"rename": "Byt namn",
 		"download": "Ladda ner",
+		"downloadTitle": "Ladda ner fil",
+		"downloadConfirm": "Spara filen på datorn?",
 		"saveAndContinue": "Spara och fortsätt",
 		"discardChanges": "Kasta ändringar",
 		"discardAndContinue": "Kasta ändringar och fortsätt",

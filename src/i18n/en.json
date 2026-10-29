@@ -86,6 +86,8 @@
 		"ok": "OK",
 		"rename": "Rename",
 		"download": "Download",
+		"downloadTitle": "Download file",
+		"downloadConfirm": "Save the file to your computer?",
 		"saveAndContinue": "Save and continue",
 		"discardChanges": "Discard changes",
 		"discardAndContinue": "Discard changes and continue",
