@@ -10,8 +10,8 @@
 
 // ---- Button -------------------------------------------------------------
 .sb-btn {
-	display: inline-flex; align-items: center; gap: var(--sb-space-2);
-	height: 2.1rem; padding: 0 var(--sb-space-3);
+	display: inline-flex; align-items: center; gap: var(--sb-space-3);
+	height: 2.5rem; padding: 0 1.25rem; line-height: 1.2;
 	font-family: var(--sb-font-ui); font-size: var(--sb-size-sm); font-weight: var(--sb-weight-medium);
 	color: var(--sb-text); background: transparent;
 	border: 1px solid transparent; border-radius: var(--sb-radius-sm);
@@ -22,7 +22,7 @@
 		color: var(--sb-text-muted); border: 1px dashed var(--sb-border); cursor: default;
 		.sb-icon { color: var(--sb-text-muted); }
 	}
-	&.sb-btn-sm { height: 1.9rem; padding: 0 var(--sb-space-2); }
+	&.sb-btn-sm { height: 2.1rem; padding: 0 var(--sb-space-3); }
 	&.sb-btn-icon-only { padding: 0 var(--sb-space-3); }
 }
 .sb-btn-primary {
@@ -131,7 +131,7 @@
 	.sb-icon { color: var(--sb-interactive); }
 }
 .sb-toolbar {
-	display: flex; align-items: center; gap: var(--sb-space-1);
+	display: flex; align-items: center; gap: var(--sb-space-2);
 	height: var(--sb-toolbar-height); padding: 0 var(--sb-space-3);
 	background: var(--sb-surface-2); color: var(--sb-text);
 	border-bottom: 1px solid var(--sb-border);
@@ -192,6 +192,6 @@
 	display: flex; flex-direction: column; gap: var(--sb-space-2);
 	height: auto !important; padding: var(--sb-space-2) var(--sb-space-3) var(--sb-space-3);
 	background: var(--sb-surface-2); border-top: 1px solid var(--sb-border); text-align: left;
-	.sb-bottombar-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sb-space-1); }
+	.sb-bottombar-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sb-space-2); }
 	.sb-selection { margin-left: auto; color: var(--sb-text-muted); font-size: var(--sb-size-sm); }
 }

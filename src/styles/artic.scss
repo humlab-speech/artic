@@ -90,7 +90,7 @@
         padding: 0;
         width: 100%;
     }
-    button {
+    button:not(.sb-btn) {
         border-spacing: 0;
         @extend .artic-font-small;
         line-height: 1.1em;
