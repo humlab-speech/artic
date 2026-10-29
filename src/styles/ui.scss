@@ -178,13 +178,13 @@
 	.sb-footer-logo img { display: block; height: 1.6rem; width: auto; }
 	.sb-footer-cta p { margin: 0; }
 	.sb-footer-links { display: flex; gap: var(--sb-space-4); }
-	.sb-footer-nodes { align-self: stretch; justify-self: end; position: relative; aspect-ratio: calc(482.6 * 0.8 / 163.63); } // logo is 80% of left column height, centred
+	.sb-footer-nodes { align-self: stretch; justify-self: end; position: relative; aspect-ratio: 2; } // logo is 80% of left column height, centred
 }
-.sb-umu-logo { display: inline-flex; img { display: block; width: auto; } }
-.sb-umu-center img { height: 4rem; }
-.sb-footer-nodes .sb-umu-logo { position: absolute; inset: 10% 0; img { width: 100%; height: 100%; } }
-.sb-umu-left img { height: 1.6rem; }
-.sb-sidebar-brand { padding: var(--sb-space-3) var(--sb-space-4); .sb-umu-logo, img { display: block; width: 100%; } .sb-umu-left img { height: auto; } }
+.sb-humlab-logo { display: inline-flex; img { display: block; width: auto; } }
+.sb-humlab-center img { height: 4rem; }
+.sb-footer-nodes .sb-humlab-logo { position: absolute; inset: 10% 0; img { width: 100%; height: 100%; object-fit: contain; object-position: right center; } }
+.sb-humlab-left img { height: 1.6rem; }
+.sb-sidebar-brand { padding: var(--sb-space-3) var(--sb-space-4); .sb-humlab-logo, img { display: block; width: 100%; } .sb-humlab-left img { height: auto; } }
 .sb-about { text-align: left; padding: var(--sb-space-4); .sb-footer { margin-top: var(--sb-space-5); } }
 @media (max-width: 900px) { .sb-footer { grid-template-columns: 1fr; } }
 

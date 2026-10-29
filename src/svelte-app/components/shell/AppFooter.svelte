@@ -3,7 +3,7 @@
 	import logoDark from '../../../assets/brand/sprakbanken_inv_logo.svg';
 	import { currentTheme } from '../../stores/theme.svelte';
 	import { tr } from '../../stores/i18n.svelte';
-	import UmuLogo from './UmuLogo.svelte';
+	import HumlabLogo from './HumlabLogo.svelte';
 
 	const base = 'https://sprakbanken.se';
 </script>
@@ -24,5 +24,5 @@
 			<a href={base + '/om/referera-till-oss'} target="_blank" rel="noopener">{tr('footer.cite')}</a>
 		</div>
 	</div>
-	<div class="sb-footer-nodes"><UmuLogo variant="center" /></div>
+	<div class="sb-footer-nodes"><HumlabLogo variant="center" /></div>
 </footer>
