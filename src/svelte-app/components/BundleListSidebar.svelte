@@ -1,4 +1,5 @@
 <script lang="ts">
+	import UmuLogo from './shell/UmuLogo.svelte';
 	import { getDataTick } from '../stores/app-state.svelte';
 	import { tr } from '../stores/i18n.svelte';
 	import {
@@ -167,6 +168,7 @@
 			{/if}
 		{/each}
 	</div>
+	<div class="sb-sidebar-brand"><UmuLogo variant="left" /></div>
 	<div class="sb-sidebar-footer">
 		<Icon icon={readOnly ? icons.readOnly : icons.editable} />
 		{readOnly ? tr('bundleList.readOnly') : tr('bundleList.editable')}

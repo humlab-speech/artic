@@ -7,8 +7,5 @@
 	<div class="artic-modal-header-large artic-modal-header">
 		<h3 id="modalHeading">{tr('settings.title')}</h3>
 	</div>
-	<div class="artic-modal-body">
-		<Settings />
-	</div>
-	<div class="artic-modal-footer"></div>
+	<Settings />
 </div>

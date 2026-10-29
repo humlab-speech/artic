@@ -178,13 +178,12 @@
 	.sb-footer-logo img { display: block; height: 1.6rem; width: auto; }
 	.sb-footer-cta p { margin: 0; }
 	.sb-footer-links { display: flex; gap: var(--sb-space-4); }
-	.sb-footer-nodes { display: flex; gap: var(--sb-space-3); }
-	.sb-node-logo {
-		display: flex; align-items: center; justify-content: center; min-width: 7rem; min-height: 4.5rem; padding: var(--sb-space-2);
-		text-align: center; text-decoration: none; font-weight: var(--sb-weight-semibold);
-		color: var(--sb-text-muted); border: 1px dashed var(--sb-border-control); border-radius: var(--sb-radius-sm);
-	}
+	.sb-footer-nodes { display: flex; align-items: center; justify-self: end; }
 }
+.sb-umu-logo { display: inline-flex; img { display: block; width: auto; } }
+.sb-umu-center img { height: 4rem; }
+.sb-umu-left img { height: 1.6rem; }
+.sb-sidebar-brand { padding: var(--sb-space-3) var(--sb-space-4); .sb-umu-logo, img { display: block; width: 100%; } .sb-umu-left img { height: auto; } }
 .sb-about { text-align: left; padding: var(--sb-space-4); .sb-footer { margin-top: var(--sb-space-5); } }
 @media (max-width: 900px) { .sb-footer { grid-template-columns: 1fr; } }
 

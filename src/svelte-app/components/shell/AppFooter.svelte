@@ -3,10 +3,9 @@
 	import logoDark from '../../../assets/brand/sprakbanken_inv_logo.svg';
 	import { currentTheme } from '../../stores/theme.svelte';
 	import { tr } from '../../stores/i18n.svelte';
+	import UmuLogo from './UmuLogo.svelte';
 
 	const base = 'https://sprakbanken.se';
-	// Umeå universitet and Humlab node logos (light and dark) are pending, see plan Task 0.3;
-	// until then they are rendered as linked text boxes.
 </script>
 
 <footer class="sb-footer">
@@ -25,8 +24,5 @@
 			<a href={base + '/om/referera-till-oss'} target="_blank" rel="noopener">{tr('footer.cite')}</a>
 		</div>
 	</div>
-	<div class="sb-footer-nodes">
-		<a class="sb-node-logo" href="https://www.umu.se/" target="_blank" rel="noopener">{tr('footer.umu')}</a>
-		<a class="sb-node-logo" href="https://www.umu.se/humlab/" target="_blank" rel="noopener">{tr('footer.humlab')}</a>
-	</div>
+	<div class="sb-footer-nodes"><UmuLogo variant="center" /></div>
 </footer>
