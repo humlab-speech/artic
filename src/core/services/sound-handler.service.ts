@@ -35,11 +35,20 @@ export class SoundHandlerService {
 		}
 	};
 
+	// libav/resampler output is AudioBufferLike; createBufferSource needs a real AudioBuffer
+	private toNativeBuffer(buf) {
+		if (typeof AudioBuffer !== 'undefined' && buf instanceof AudioBuffer) return buf;
+		if (typeof buf.getChannelData !== 'function' || typeof this.audioContext.createBuffer !== 'function') return buf;
+		const native = this.audioContext.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+		for (let ch = 0; ch < buf.numberOfChannels; ch++) native.copyToChannel(buf.getChannelData(ch), ch);
+		return native;
+	}
+
 	private startPlayback(sampleStart, endSample) {
 		var startTime = sampleStart / this.audioBuffer.sampleRate;
 		var endTime = endSample / this.audioBuffer.sampleRate;
 		var durTime = endTime - startTime;
-		var srcBuffer = this.playbackBuffer || this.audioBuffer;
+		var srcBuffer = this.toNativeBuffer(this.playbackBuffer || this.audioBuffer);
 		this.curSource = this.audioContext.createBufferSource();
 		this.curSource.buffer = srcBuffer;
 		this.curSource.connect(this.audioContext.destination);
@@ -50,12 +59,10 @@ export class SoundHandlerService {
 	public playFromTo(sampleStart, endSample) {
 		if (this.isPlaying) {
 			this.isPlaying = false;
-			this.curSource.stop(0);
-		} else {
+			try { this.curSource?.stop(0); } catch (e) { /* not started yet */ }
+		} else if (this.audioBuffer.length > 0) {
 			this.isPlaying = true;
-			if (this.audioBuffer.length > 0) {
-				this.decodeAndPlay(sampleStart, endSample);
-			}
+			this.decodeAndPlay(sampleStart, endSample);
 		}
 	};
 }
