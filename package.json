@@ -85,5 +85,9 @@
     "test:e2e": "playwright test",
     "lint:tokens": "node scripts/lint-tokens.mjs --strict",
     "test:workers": "jest --config=jest.workers.config.js"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.6": true,
+    "fsevents@2.3.3": true
   }
 }
