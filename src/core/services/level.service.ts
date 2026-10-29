@@ -427,12 +427,10 @@ export class LevelService{
 				}
 				*/
 			} else {
-				start = this.ViewStateService.getPos(clientWidth, lastEventClick.samplePoint) + clientOffset - (len / 2);
-				end = this.ViewStateService.getPos(clientWidth, lastEventClick.samplePoint) + clientOffset + (len / 2);
-				width = end - start;
-				if (width < (2 * len)) {
-					width = (2 * len);
-				}
+				// point editor: centred on the point, wide enough for the text plus padding
+				var center = this.ViewStateService.getPos(clientWidth, lastEventClick.samplePoint) + clientOffset;
+				width = Math.max(2 * len, 60);
+				start = center - width / 2;
 				this.createEditAreaElement(element, start, top, width, height, editText, lastEventClick.id);
 			}
 			this.createSelection(element.querySelector ? element.querySelector('textarea') : element.find('textarea')[0], 0, editText.length);
