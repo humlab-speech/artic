@@ -1,12 +1,12 @@
 <script lang="ts">
 	import centerEn from '../../../assets/brand/humlab-center-en.svg';
-	import centerEnNeg from '../../../assets/brand/humlab-center-en-neg.png';
+	import centerEnNeg from '../../../assets/brand/humlab-center-en-neg.svg';
 	import centerSv from '../../../assets/brand/humlab-center-sv.svg';
-	import centerSvNeg from '../../../assets/brand/humlab-center-sv-neg.png';
+	import centerSvNeg from '../../../assets/brand/humlab-center-sv-neg.svg';
 	import leftEn from '../../../assets/brand/humlab-left-en.svg';
-	import leftEnNeg from '../../../assets/brand/humlab-left-en-neg.png';
+	import leftEnNeg from '../../../assets/brand/humlab-left-en-neg.svg';
 	import leftSv from '../../../assets/brand/humlab-left-sv.svg';
-	import leftSvNeg from '../../../assets/brand/humlab-left-sv-neg.png';
+	import leftSvNeg from '../../../assets/brand/humlab-left-sv-neg.svg';
 	import { currentTheme } from '../../stores/theme.svelte';
 	import { currentLanguage, tr } from '../../stores/i18n.svelte';
 
