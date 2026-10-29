@@ -25,9 +25,15 @@ function insertLevel(type: 'SEGMENT' | 'EVENT') {
 	if (viewStateService.getCurAttrDef(newName) === undefined) {
 		viewStateService.setCurLevelAttrDefs([{ name: newName, type: 'EVENT', attributeDefinitions: { name: newName, type: 'string' } }]);
 	}
+	// Level.svelte and getAttrDefsNames() read the level definition from the db config
+	const levelDefs = configProviderService.curDbConfig.levelDefinitions;
+	if (!levelDefs.some((ld: any) => ld.name === newName)) {
+		levelDefs.push({ name: newName, type, attributeDefinitions: [{ name: newName, type: 'string' }] });
+	}
 	levelService.insertLevel(level, length, viewStateService.curPerspectiveIdx);
 	historyService.addObjToUndoStack({ type: 'ANNOT', action: 'INSERTLEVEL', level, id: length, curPerspectiveIdx: viewStateService.curPerspectiveIdx });
 	viewStateService.selectLevel(false, configProviderService.vals.perspectives[viewStateService.curPerspectiveIdx].levelCanvases.order, levelService);
+	invalidate();
 }
 
 export function addLevelSeg() {

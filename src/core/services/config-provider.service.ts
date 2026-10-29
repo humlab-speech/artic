@@ -197,11 +197,9 @@ export class ConfigProviderService {
 	};
 
 	public getAttrDefsNames(levelName) {
-		var res = [];
-		this.getLevelDefinition(levelName).attributeDefinitions.forEach((ad) => {
-			res.push(ad.name);
-		});
-		return res;
+		// attributeDefinitions is an array, a single definition object (legacy), or absent
+		const defs = this.getLevelDefinition(levelName).attributeDefinitions;
+		return (Array.isArray(defs) ? defs : defs ? [defs] : []).map((ad) => ad.name);
 	};
 
 	public setPerspectivesOrder(curPerspective, levelName) {
