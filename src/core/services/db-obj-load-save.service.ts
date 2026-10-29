@@ -249,7 +249,11 @@ export class DbObjLoadSaveService {
 			}
 			return Promise.resolve();
 		} else {
-			if (bndl !== this.LoadedMetaDataService.getCurBndl()) {
+			// Local (drag-n-drop) mode: list entry is a distinct object from the loaded bundle and has no
+			// retrievable media, so re-selecting the loaded file must be a no-op, not a reload that hangs.
+			const cur = this.LoadedMetaDataService.getCurBndl();
+			const isLocalSame = this.ConfigProviderService.vals.main.comMode === 'EMBEDDED' && cur && bndl.name === cur.name;
+			if (bndl !== cur && !isLocalSame) {
 				this.HistoryService.resetToInitState();
 				this.ViewStateService.hierarchyState.reset();
 				this.LevelService.deleteEditArea();
