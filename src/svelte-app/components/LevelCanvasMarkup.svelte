@@ -478,14 +478,14 @@
 
 		if (clickedSegs !== undefined) {
 			if (curLevel.name === levelId && clickedSegs.length > 0) {
-				clickedSegs.forEach((cs: any) => {
-					if (cs !== undefined) {
+				clickedSegs.forEach((seg: any) => {
+					if (seg !== undefined) {
 						let posS: number, posE: number;
-						if (cs.sampleStart !== undefined) {
-							posS = Math.round(viewStateService.getPos(ctx.canvas.width, cs.sampleStart));
-							posE = Math.round(viewStateService.getPos(ctx.canvas.width, cs.sampleStart + cs.sampleDur + 1));
+						if (seg.sampleStart !== undefined) {
+							posS = Math.round(viewStateService.getPos(ctx.canvas.width, seg.sampleStart));
+							posE = Math.round(viewStateService.getPos(ctx.canvas.width, seg.sampleStart + seg.sampleDur + 1));
 						} else {
-							posS = Math.round(viewStateService.getPos(ctx.canvas.width, cs.samplePoint) + sDist / 2) - 5;
+							posS = Math.round(viewStateService.getPos(ctx.canvas.width, seg.samplePoint) + sDist / 2) - 5;
 							posE = posS + 10;
 						}
 						ctx.fillStyle = cs().color.segmentSelected;
