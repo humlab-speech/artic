@@ -1,0 +1,6 @@
+{
+	"files": ["src/styles/fonts.css"],
+	"lines": [
+		{ "file": "src/core/services/view-state.service.ts", "contains": "'rgb('" }
+	]
+}

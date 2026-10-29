@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 import { select } from 'd3-selection';
 import { zoom as d3zoom, zoomTransform, zoomIdentity } from 'd3-zoom';
 import { pointer } from 'd3-selection';
@@ -16,13 +18,6 @@ import {
 } from '../stores/services';
 
 // Color constants (from artic-design.scss :export block)
-const COLOR_DARK_GREY = '#303030';
-const COLOR_WHITE = '#ffffff';
-const COLOR_BLUE = '#2A4765';
-const COLOR_RED = '#f00';
-const COLOR_YELLOW = '#ff0';
-const COLOR_GREY = '#73A790';
-const COLOR_TRANSPARENT_GREY = 'rgba(22, 22, 22, 0.1)';
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 let containerEl: HTMLDivElement;
@@ -388,7 +383,7 @@ function getPreviewColor() {
 	);
 
 	if (validity.valid) {
-		return 'green';
+		return cs().color.contours[1];
 	} else {
 		if (validity.reason === 3) {
 			validity = hierarchyManipulationService.checkLinkValidity(
@@ -397,10 +392,10 @@ function getPreviewColor() {
 				newLinkSrc.id,
 			);
 			if (validity.valid) {
-				return 'green';
+				return cs().color.contours[1];
 			}
 		}
-		return 'red';
+		return cs().color.error;
 	}
 }
 
@@ -413,7 +408,7 @@ function getLabelLegalnessColor(d: any) {
 	if (legalLabels === undefined || (dom && dom.value.length > 0 && legalLabels.indexOf(dom.value) >= 0)) {
 		return 'lightgreen';
 	} else {
-		return 'red';
+		return cs().color.error;
 	}
 }
 
@@ -603,9 +598,9 @@ function renderSelectionOnly() {
 	svg
 		.selectAll('circle.emuhierarchy-nodeCircle')
 		.style('fill', (d: any) => {
-			let color = COLOR_WHITE;
+			let color = cs().color.hierarchy.node;
 			if (typeof selectedItem !== 'undefined' && d.id === selectedItem.id) {
-				color = COLOR_BLUE;
+				color = cs().color.hierarchy.nodeSelected;
 			}
 			return color;
 		});
@@ -614,9 +609,9 @@ function renderSelectionOnly() {
 		.selectAll('path.emuhierarchy-link')
 		.style('stroke', (d: any) => {
 			if (selectedLink === d) {
-				return COLOR_YELLOW;
+				return cs().color.warning;
 			} else {
-				return COLOR_GREY;
+				return cs().color.hierarchy.nodeStroke;
 			}
 		});
 
@@ -659,14 +654,14 @@ function render() {
 		scaleFactorDisplay
 			.select('text')
 			.attr('text-anchor', 'end')
-			.style('fill', COLOR_WHITE)
+			.style('fill', cs().color.text)
 			.text('Zoom: ' + Math.round(t.k * 100) + ' %');
 	} else {
 		scaleFactorDisplay.attr('transform', 'translate(0, ' + height + ')');
 		scaleFactorDisplay
 			.select('text')
 			.attr('text-anchor', 'start')
-			.style('fill', COLOR_WHITE)
+			.style('fill', cs().color.text)
 			.text('Zoom: ' + Math.round(t.k * 100) + ' %');
 	}
 
@@ -693,8 +688,8 @@ function render() {
 		.attr('transform', getOrientatedAddItemButtonTransform)
 		.on('click', addButtonOnClick);
 
-	addItemButtons.append('circle').style('fill', COLOR_BLUE).attr('r', 8);
-	addItemButtons.append('path').style('stroke', COLOR_WHITE).attr('d', 'M0,-6 V6 M-6,0 H6');
+	addItemButtons.append('circle').style('fill', cs().color.hierarchy.nodeSelected).attr('r', 8);
+	addItemButtons.append('path').style('stroke', cs().color.hierarchy.node).attr('d', 'M0,-6 V6 M-6,0 H6');
 
 	newLevelCaptions
 		.filter((d: any) => {
@@ -703,7 +698,7 @@ function render() {
 		})
 		.append('rect')
 		.attr('class', 'emuhierarchy-timelevelbackground')
-		.style('fill', COLOR_TRANSPARENT_GREY);
+		.style('fill', cs().color.hoverFill);
 
 	// Merge
 	levelCaptionSet = levelCaptionSet.merge(newLevelCaptions);
@@ -813,7 +808,7 @@ function render() {
 		.on('click', nodeOnClick)
 		.on('mouseover', nodeOnMouseOver);
 
-	const circle = newNodes.append('circle').attr('class', 'emuhierarchy-nodeCircle').style('stroke', COLOR_GREY);
+	const circle = newNodes.append('circle').attr('class', 'emuhierarchy-nodeCircle').style('stroke', cs().color.hierarchy.nodeStroke);
 
 	if (transition.nodes) {
 		circle.attr('r', 0).transition().duration(transition.duration).attr('r', 4.5);
@@ -882,17 +877,17 @@ function render() {
 	dataSet
 		.select('circle.emuhierarchy-nodeCircle')
 		.style('fill', (d: any) => {
-			let color = COLOR_WHITE;
+			let color = cs().color.hierarchy.node;
 			if (typeof selectedItem !== 'undefined' && d.id === selectedItem.id) {
-				color = COLOR_BLUE;
+				color = cs().color.hierarchy.nodeSelected;
 			}
 			return color;
 		})
 		.style('stroke', (d: any) => {
 			if (viewStateService.hierarchyState.getCollapsed(d.id)) {
-				return COLOR_RED;
+				return cs().color.error;
 			} else {
-				return COLOR_GREY;
+				return cs().color.hierarchy.nodeStroke;
 			}
 		});
 
@@ -1029,9 +1024,9 @@ function render() {
 
 	linkSet.selectAll('.emuhierarchy-link').style('stroke', (d: any) => {
 		if (selectedLink === d) {
-			return COLOR_YELLOW;
+			return cs().color.warning;
 		} else {
-			return COLOR_GREY;
+			return cs().color.hierarchy.nodeStroke;
 		}
 	});
 
@@ -1057,7 +1052,7 @@ function render() {
 		svg
 			.append('path')
 			.attr('class', 'emuhierarchy-newlink')
-			.style('stroke', 'black')
+			.style('stroke', cs().color.hierarchy.link)
 			.style('stroke-width', getOrientatedLinkStrokeWidth);
 
 		svg
@@ -1120,7 +1115,7 @@ $effect(() => {
 		.append('svg')
 		.attr('width', '100%')
 		.attr('height', '100%')
-		.style('background-color', COLOR_DARK_GREY)
+		.style('background-color', cs().color.bg)
 		.call(zoomListener)
 		.on('dblclick.zoom', null)
 		.on('mousemove', svgOnMouseMove)
@@ -1145,7 +1140,7 @@ $effect(() => {
 	timeArrow = rootG
 		.append('g')
 		.append('text')
-		.style('fill', COLOR_WHITE)
+		.style('fill', cs().color.text)
 		.text('time →');
 
 	scaleFactorDisplay = rootG.append('g');

@@ -1,4 +1,3 @@
-@use 'artic-design' as *;
 @use 'font' as *;
 @use 'mixins' as *;
 
@@ -37,6 +36,8 @@ div.printTitle {
     .artic-filter,
     .artic-bundle-outer,
     .artic-top-menu,
+    .sb-toolbar,
+    .sb-header,
     .artic-right-menu,
     .artic-bottom-menu,
     .artic-timelineCanvasButtons,

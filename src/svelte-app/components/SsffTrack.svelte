@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount, onDestroy } from 'svelte';
 	import { getViewportTick, getMarkupTick, invalidateMarkup } from '../stores/app-state.svelte';
 	import {
@@ -15,9 +17,6 @@
 	let { trackName = '', order = 0 }: { trackName: string; order: number } = $props();
 
 	// Colors
-	const COLOR_WHITE = '#F1EFE4';
-	const COLOR_TRANSPARENT_RED = 'rgba(255, 0, 0, 0.3)';
-	const CONTOUR_COLORS = ['#73A790','#2A4765','#D7B17C','#EABAB9','#B87D5E','#8B8FAE','#5B8E8A','#9C7A8C'];
 	let mainCanvas: HTMLCanvasElement;
 	let ssffCanvas: HTMLCanvasElement;
 	let markupCanvas: HTMLCanvasElement;
@@ -106,7 +105,7 @@
 			horizontalLines.yValues.forEach((yVal: number) => {
 				ctx.beginPath();
 				ctx.lineWidth = 2.4;
-				ctx.strokeStyle = 'blue';
+				ctx.strokeStyle = cs().color.selectionEdge;
 				ctx.globalAlpha = 0.75;
 				const zeroY = canvasH - ((yVal - minVal) / (maxVal - minVal) * canvasH);
 				ctx.moveTo(0, zeroY);
@@ -121,7 +120,7 @@
 			curSampleArrs[0].forEach((contourVal: number, contourNr: number) => {
 				if (isEmptyObj(minMaxContourLims) || (contourNr >= minMaxContourLims.minContourIdx && contourNr <= minMaxContourLims.maxContourIdx)) {
 					// Set color
-					ctx.strokeStyle = CONTOUR_COLORS[contourNr % CONTOUR_COLORS.length];
+					ctx.strokeStyle = cs().color.contours[contourNr % cs().color.contours.length];
 					ctx.fillStyle = ctx.strokeStyle;
 
 					// Overwrite with preconfigured colors
@@ -133,8 +132,8 @@
 
 					// Highlight selected correction tool
 					if (viewStateService.curCorrectionToolNr - 1 === contourNr && trackName === 'SPEC' && assignmentTrackName !== '') {
-						ctx.strokeStyle = '#F0581A';
-						ctx.fillStyle = '#F0581A';
+						ctx.strokeStyle = cs().color.cursor;
+						ctx.fillStyle = cs().color.cursor;
 					}
 
 					ctx.beginPath();
@@ -174,7 +173,7 @@
 				}
 			});
 		} else {
-			ctx.strokeStyle = 'red';
+			ctx.strokeStyle = cs().color.error;
 			const fontSize = 12;
 			const fontFamily = 'monospace';
 			const msg = nrOfSamples <= 2 ? 'Zoom out to' : 'Zoom in to';
@@ -183,7 +182,7 @@
 					ctx, msg, 'see contour(s)',
 					fontSize / 1.05, fontFamily,
 					canvasW / 2 - (ctx.measureText('see contour(s)').width * canvasW / (ssffCanvas.offsetWidth || 1) / 2),
-					25, COLOR_TRANSPARENT_RED
+					25, cs().color.error
 				);
 			}
 		}

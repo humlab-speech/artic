@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount, onDestroy } from 'svelte';
 	import { getDataTick, invalidate } from '../stores/app-state.svelte';
 	import {
@@ -10,7 +12,6 @@
 		historyService,
 		levelService,
 	} from '../stores/services';
-	import { styles } from '../../core/util/styles';
 	import { safeGetItem } from '../../core/util/safe-storage';
 	import LevelCanvasMarkup from './LevelCanvasMarkup.svelte';
 
@@ -40,20 +41,20 @@
 	function getAttrDefBtnColor(attrDefName: string): string {
 		const curAttrDef = viewStateService.getCurAttrDef(level.name);
 		if (attrDefName === curAttrDef) {
-			return `background: -webkit-radial-gradient(50% 50%, closest-corner, rgba(0,0,0,1), rgba(0,0,0,0) 60%); border-color: ${styles.colorYellow}`;
+			return 'background-color: var(--sb-interactive); border-color: var(--sb-interactive)';
 		}
-		return `background-color: ${styles.colorWhite}`;
+		return 'background-color: var(--sb-border-control)';
 	}
 
 	function drawLevelDetailsFor(level: any) {
 		if (!ctx || isEmptyObj(level)) return;
 
-		const fontFamily = styles.fontSmallFamily;
+		const fontFamily = cs().family.data;
 		let labelFontFamily: string;
 		if (
 			typeof configProviderService.vals.perspectives[viewStateService.curPerspectiveIdx]?.levelCanvases?.labelFontFamily === 'undefined'
 		) {
-			labelFontFamily = styles.fontSmallFamily;
+			labelFontFamily = cs().family.data;
 		} else {
 			labelFontFamily = configProviderService.vals.perspectives[viewStateService.curPerspectiveIdx].levelCanvases.labelFontFamily;
 		}
@@ -64,12 +65,12 @@
 		}
 		levelCanvasesFontScalingFactor = levelCanvasesFontScalingFactor / 100;
 
-		const fontSize = parseInt(styles.fontSmallSize.slice(0, -2));
+		const fontSize = cs().size.sm;
 		let labelFontSize: number;
 		if (
 			typeof configProviderService.vals.perspectives[viewStateService.curPerspectiveIdx]?.levelCanvases?.fontPxSize === 'undefined'
 		) {
-			labelFontSize = parseInt(styles.fontSmallSize.slice(0, -2)) * levelCanvasesFontScalingFactor;
+			labelFontSize = cs().size.sm * levelCanvasesFontScalingFactor;
 		} else {
 			labelFontSize = configProviderService.vals.perspectives[viewStateService.curPerspectiveIdx].levelCanvases.labelFontPxSize * levelCanvasesFontScalingFactor;
 		}
@@ -87,14 +88,14 @@
 			fontScaleService.drawUndistortedText(
 				ctx, level.name, fontSize, fontFamily,
 				4, ctx.canvas.height / 2,
-				styles.colorBlue, true
+				cs().color.accentText, true
 			);
 		} else {
 			fontScaleService.drawUndistortedTextTwoLines(
 				ctx, level.name + ':' + curAttrDef, '(' + level.type + ')',
 				fontSize, fontFamily,
 				4, ctx.canvas.height / 2 - fontSize * scaleY,
-				styles.colorWhite, true
+				cs().color.text, true
 			);
 		}
 
@@ -102,7 +103,7 @@
 		const zeroTxtImgWidth = ctx.measureText('0').width * fontScaleService.scaleX;
 
 		if (level.type === 'SEGMENT') {
-			ctx.fillStyle = styles.colorWhite;
+			ctx.fillStyle = cs().color.boundary;
 			level.items.forEach((item: any) => {
 				if (
 					(item.sampleStart >= viewStateService.curViewPort.sS && item.sampleStart <= viewStateService.curViewPort.eS) ||
@@ -118,11 +119,11 @@
 					const posE = viewStateService.getPos(ctx.canvas.width, item.sampleStart + item.sampleDur + 1);
 
 					// segment start
-					ctx.fillStyle = styles.colorWhite;
+					ctx.fillStyle = cs().color.boundary;
 					ctx.fillRect(posS, 0, 1, ctx.canvas.height / 2);
 
 					// segment end
-					ctx.fillStyle = styles.colorGrey;
+					ctx.fillStyle = cs().color.boundaryMuted;
 					ctx.fillRect(posE, ctx.canvas.height / 2, 1, ctx.canvas.height);
 
 					ctx.font = (fontSize - 2) + 'px ' + labelFontFamily;
@@ -133,7 +134,7 @@
 							ctx, curLabVal, labelFontSize - 2, labelFontFamily,
 							posS + (posE - posS) / 2,
 							(ctx.canvas.height / 2) - (fontSize - 2) + 2,
-							styles.colorWhite, false
+							cs().color.text, false
 						);
 					}
 
@@ -142,7 +143,7 @@
 						const labelCenter = posS + (posE - posS) / 2;
 
 						let hlY = ctx.canvas.height / 4;
-						ctx.strokeStyle = styles.colorWhite;
+						ctx.strokeStyle = cs().color.boundary;
 						ctx.lineWidth = 1;
 						ctx.beginPath();
 						ctx.moveTo(posS, hlY);
@@ -151,7 +152,7 @@
 						ctx.stroke();
 
 						hlY = ctx.canvas.height / 4 * 3;
-						ctx.strokeStyle = styles.colorGrey;
+						ctx.strokeStyle = cs().color.boundaryMuted;
 						ctx.beginPath();
 						ctx.moveTo(posE, hlY);
 						ctx.lineTo(labelCenter, hlY);
@@ -166,7 +167,7 @@
 							fontScaleService.drawUndistortedText(
 								ctx, item.sampleStart, fontSize - 2, fontFamily,
 								posS + 3, (fontSize * scaleY) / 2,
-								styles.colorBlue, true
+								cs().color.textMuted, true
 							);
 						}
 
@@ -177,14 +178,14 @@
 								ctx, durtext, fontSize - 2, fontFamily,
 								posE - (ctx.measureText(durtext).width * fontScaleService.scaleX),
 								ctx.canvas.height / 4 * 3 + (fontSize * scaleY) / 2,
-								styles.colorBlue, true
+								cs().color.textMuted, true
 							);
 						}
 					}
 				}
 			});
 		} else if (level.type === 'EVENT') {
-			ctx.fillStyle = styles.colorWhite;
+			ctx.fillStyle = cs().color.boundary;
 			level.items.forEach((item: any) => {
 				if (item.samplePoint > viewStateService.curViewPort.sS && item.samplePoint < viewStateService.curViewPort.eS) {
 					const perc = Math.round(viewStateService.getPos(ctx.canvas.width, item.samplePoint) + (sDist / 2));
@@ -193,21 +194,21 @@
 						if (lab.name === curAttrDef) curLabVal = lab.value;
 					});
 
-					ctx.fillStyle = styles.colorWhite;
+					ctx.fillStyle = cs().color.boundary;
 					ctx.fillRect(perc, 0, 1, ctx.canvas.height / 2 - ctx.canvas.height / 5);
 					ctx.fillRect(perc, ctx.canvas.height / 2 + ctx.canvas.height / 5, 1, ctx.canvas.height / 2 - ctx.canvas.height / 5);
 
 					fontScaleService.drawUndistortedText(
 						ctx, curLabVal, labelFontSize - 2, labelFontFamily,
 						perc, (ctx.canvas.height / 2) - (fontSize - 2) + 2,
-						styles.colorWhite, false
+						cs().color.text, false
 					);
 
 					if (isOpen) {
 						fontScaleService.drawUndistortedText(
 							ctx, item.samplePoint, fontSize - 2, labelFontFamily,
 							perc + 5, (fontSize * scaleY) / 2,
-							styles.colorBlue, true
+							cs().color.textMuted, true
 						);
 					}
 				}

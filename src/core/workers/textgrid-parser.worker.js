@@ -203,7 +203,10 @@ TextGridParserWorker.prototype = {
 		 */
 		global.toTextGrid = function (levelData, buffLength, sampleRate) {
 
+			// ITEM levels have no time information and cannot be represented in a TextGrid
+			levelData = levelData.filter(function (l) { return l.type === 'SEGMENT' || l.type === 'EVENT'; });
 			var tG = '';
+			var q = function (v) { return String(v === undefined ? '' : v).replace(/"/g, '""'); }; // Praat escapes " by doubling
 			var nl = '\n';
 			var t = '\t';
 
@@ -220,13 +223,13 @@ TextGridParserWorker.prototype = {
 				//write level items
 				//levelNr = levelNr + 1;
 				var curLevel = levelData[levelNr];
-				tG = tG + t + 'item [' + levelNr + ']:' + nl;
+				tG = tG + t + 'item [' + (levelNr + 1) + ']:' + nl;
 				if (curLevel.type === 'SEGMENT') {
 					tG = tG + t + t + 'class = "IntervalTier"' + nl;
 				} else if (curLevel.type === 'EVENT') {
 					tG = tG + t + t + 'class = "TextTier"' + nl;
 				}
-				tG = tG + t + t + 'name = "' + curLevel.name + '"' + nl;
+				tG = tG + t + t + 'name = "' + q(curLevel.name) + '"' + nl;
 				tG = tG + t + t + 'xmin = ' + global.findTimeOfMinSample() + nl;
 				tG = tG + t + t + 'xmax = ' + global.findTimeOfMaxSample(buffLength, sampleRate) + nl;
 				if (curLevel.type === 'SEGMENT') {
@@ -239,24 +242,16 @@ TextGridParserWorker.prototype = {
 					var evtNr = j + 1;
 					if (curLevel.type === 'SEGMENT') {
 						tG = tG + t + t + t + 'intervals [' + evtNr + ']:' + nl;
-						if (curLevel.items[j].sampleStart !== 0) {
-							curVal = ((curLevel.items[j].sampleStart / sampleRate) + ((1 / sampleRate) / 2));
-							tG = tG + t + t + t + t + 'xmin = ' + curVal + nl;
-						} else {
-							tG = tG + t + t + t + t + 'xmin = ' + 0 + nl;
-						}
-						if (j < curLevel.items.length - 1) {
-							curVal = (((curLevel.items[j].sampleStart + curLevel.items[j].sampleDur) / sampleRate) + ((1 / sampleRate) / 2));
-							tG = tG + t + t + t + t + 'xmax = ' + curVal + nl;
-						} else {
-							tG = tG + t + t + t + t + 'xmax = ' + global.findTimeOfMaxSample(buffLength, sampleRate) + nl;
-						}
+						// contiguous tiling: xmin = previous xmax (Praat requires no gaps/overlaps)
+						var bnd = function (it) { return (it.sampleStart + it.sampleDur + 0.5) / sampleRate; };
+						tG = tG + t + t + t + t + 'xmin = ' + (j === 0 ? 0 : bnd(curLevel.items[j - 1])) + nl;
+						tG = tG + t + t + t + t + 'xmax = ' + (j < curLevel.items.length - 1 ? bnd(curLevel.items[j]) : global.findTimeOfMaxSample(buffLength, sampleRate)) + nl;
 
-						tG = tG + t + t + t + t + 'text = "' + curLevel.items[j].labels[0].value + '"' + nl;
+						tG = tG + t + t + t + t + 'text = "' + q(curLevel.items[j].labels[0].value) + '"' + nl;
 					} else if (curLevel.type === 'EVENT') {
-						tG = tG + t + t + t + 'points[' + evtNr + ']:' + nl;
+						tG = tG + t + t + t + 'points [' + evtNr + ']:' + nl;
 						tG = tG + t + t + t + t + 'time = ' + curLevel.items[j].samplePoint / sampleRate + nl;
-						tG = tG + t + t + t + t + 'mark = "' + curLevel.items[j].labels[0].value + '"' + nl;
+						tG = tG + t + t + t + t + 'mark = "' + q(curLevel.items[j].labels[0].value) + '"' + nl;
 					}
 				}
 			}

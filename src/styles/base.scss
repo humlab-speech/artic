@@ -1,0 +1,40 @@
+// Base typography, focus and motion rules. Colours and sizes come from
+// the --sb-* custom properties injected from core/theme/tokens.ts.
+// The base font size is never set: the browser's text size setting rules.
+
+body {
+	font-family: var(--sb-font-ui);
+	color: var(--sb-text);
+	background: var(--sb-surface);
+}
+
+button, input, select, textarea { font: inherit; }
+
+h1 { font-size: var(--sb-size-xxl); font-weight: var(--sb-weight-light); }
+h2 { font-size: var(--sb-size-xl); font-weight: var(--sb-weight-regular); }
+h3 { font-size: var(--sb-size-lg); font-weight: var(--sb-weight-medium); }
+
+// Data: labels, level names, bundle names, times
+.sb-data {
+	font-family: var(--sb-font-data);
+	font-size: calc(var(--sb-noto-scale) * 1em);
+}
+
+// Body text: help, manual, long dialog text
+.sb-prose {
+	font-family: var(--sb-font-body);
+	font-size: calc(var(--sb-noto-scale) * 1rem);
+	line-height: 1.6;
+}
+
+:focus-visible {
+	outline: 2px solid var(--sb-focus-ring);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		transition: none !important;
+		animation-duration: 0.001ms !important;
+	}
+}

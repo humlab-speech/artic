@@ -125,7 +125,7 @@ export class AudioParserService {
 						// Browser failed — fall back to libav.js (FFmpeg WASM)
 						this.decodeWithLibAV(buf).then(resolve, reject);
 					}
-				);
+				)?.catch?.(() => { /* promise form rejects too; the error callback above already handles it */ });
 			} catch (e) {
 				reject({ 'status': { 'type': 'ERROR', 'message': 'AudioContext not available: ' + e.message } });
 			}

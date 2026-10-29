@@ -1,3 +1,4 @@
+import { t } from '../util/i18n';
 import { WavRangeReq } from '../workers/wavrangereq.worker';
 import { httpGet } from '../util/http-get';
 
@@ -42,7 +43,7 @@ export class DbObjLoadSaveService {
 	}
 
 	private innerLoadBundle(bndl, bundleData, arrBuff): Promise<void> {
-		this.ViewStateService.somethingInProgressTxt = 'Parsing audio file...';
+		this.ViewStateService.somethingInProgressTxt = t('progress.parsingAudio');
 
 		return this.WavParserService.parseAudioBuf(arrBuff).then((result) => {
 			var audioBuffer = result.audioBuffer;
@@ -79,7 +80,7 @@ export class DbObjLoadSaveService {
 						bundleData.ssffFiles[i].data = res[i];
 					}
 				}
-				this.ViewStateService.somethingInProgressTxt = 'Parsing SSFF files...';
+				this.ViewStateService.somethingInProgressTxt = t('progress.parsingSsff');
 				return this.SsffParserService.asyncParseSsffArr(bundleData.ssffFiles).then((ssffJso) => {
 					this.SsffDataService.data = ssffJso.data;
 					this.DataService.setData(bundleData.annotation);
@@ -88,19 +89,19 @@ export class DbObjLoadSaveService {
 					this.ViewStateService.setState('labeling');
 
 					this.ViewStateService.somethingInProgress = false;
-					this.ViewStateService.somethingInProgressTxt = 'Done!';
+					this.ViewStateService.somethingInProgressTxt = t('progress.done');
 				}, (errMess) => {
-					this.ModalService.open('views/error.html', 'Error parsing SSFF file: ' + errMess.status.message).then(() => {
+					this.ModalService.open('views/error.html', t('msg.ssffParse') + errMess.status.message).then(() => {
 						this.AppStateService.resetToInitState();
 					});
 				});
 			}, (errMess) => {
-				this.ModalService.open('views/error.html', 'Error fetching SSFF files: ' + JSON.stringify(errMess)).then(() => {
+				this.ModalService.open('views/error.html', t('msg.ssffFetch') + JSON.stringify(errMess)).then(() => {
 					this.AppStateService.resetToInitState();
 				});
 			});
 		}, (errMess) => {
-			this.ModalService.open('views/error.html', 'Error decoding audio file: ' + errMess.status.message).then(() => {
+			this.ModalService.open('views/error.html', t('msg.audioDecode') + errMess.status.message).then(() => {
 				this.AppStateService.resetToInitState();
 			});
 		});
@@ -108,7 +109,7 @@ export class DbObjLoadSaveService {
 
 	private async loadBundleWithStreaming(bndl, bundleData): Promise<void> {
 		var audioUrl = bundleData.mediaFile.data;
-		this.ViewStateService.somethingInProgressTxt = 'Probing audio header...';
+		this.ViewStateService.somethingInProgressTxt = t('progress.probing');
 
 		try {
 			var rangeReq = new WavRangeReq();
@@ -120,7 +121,7 @@ export class DbObjLoadSaveService {
 			var chunkSamples = sampleRate * chunkDuration;
 
 			var firstChunkEnd = Math.min(chunkSamples - 1, fileInfo.lastSampleBlockIdx);
-			this.ViewStateService.somethingInProgressTxt = 'Loading audio (chunk 1)...';
+			this.ViewStateService.somethingInProgressTxt = t('progress.chunk1');
 			var firstRange = await rangeReq.getRange(0, firstChunkEnd);
 
 			var firstResult = await this.WavParserService.parseWavAudioBuf(firstRange.buffer);
@@ -164,7 +165,7 @@ export class DbObjLoadSaveService {
 					bundleData.ssffFiles[i].data = res[i];
 				}
 			}
-			this.ViewStateService.somethingInProgressTxt = 'Parsing SSFF files...';
+			this.ViewStateService.somethingInProgressTxt = t('progress.parsingSsff');
 			var ssffJso = await this.SsffParserService.asyncParseSsffArr(bundleData.ssffFiles);
 			this.SsffDataService.data = ssffJso.data;
 			this.DataService.setData(bundleData.annotation);
@@ -172,10 +173,10 @@ export class DbObjLoadSaveService {
 			this.ViewStateService.selectLevel(false, this.ConfigProviderService.vals.perspectives[this.ViewStateService.curPerspectiveIdx].levelCanvases.order, this.LevelService);
 			this.ViewStateService.setState('labeling');
 			this.ViewStateService.somethingInProgress = false;
-			this.ViewStateService.somethingInProgressTxt = 'Done!';
+			this.ViewStateService.somethingInProgressTxt = t('progress.done');
 		} catch(err) {
 			var errMsg = err && err.status ? err.status.message : (err && err.message ? err.message : JSON.stringify(err));
-			this.ModalService.open('views/error.html', 'Error streaming audio: ' + errMsg).then(() => {
+			this.ModalService.open('views/error.html', t('msg.audioStream') + errMsg).then(() => {
 				this.AppStateService.resetToInitState();
 			});
 		}
@@ -189,7 +190,7 @@ export class DbObjLoadSaveService {
 		for(var s = startSample; s <= fileInfo.lastSampleBlockIdx; s += chunkSamples){
 			chunkIdx++;
 			var endSample = Math.min(s + chunkSamples - 1, fileInfo.lastSampleBlockIdx);
-			this.ViewStateService.somethingInProgressTxt = 'Loading audio (chunk ' + chunkIdx + '/' + totalChunks + ')...';
+			this.ViewStateService.somethingInProgressTxt = t('progress.audioChunk', { n: chunkIdx, m: totalChunks });
 
 			try {
 				var range = await rangeReq.getRange(s, endSample);
@@ -205,7 +206,7 @@ export class DbObjLoadSaveService {
 				break;
 			}
 		}
-		this.ViewStateService.somethingInProgressTxt = 'Done!';
+		this.ViewStateService.somethingInProgressTxt = t('progress.done');
 		this.ViewStateService.somethingInProgress = false;
 	}
 
@@ -248,7 +249,11 @@ export class DbObjLoadSaveService {
 			}
 			return Promise.resolve();
 		} else {
-			if (bndl !== this.LoadedMetaDataService.getCurBndl()) {
+			// Local (drag-n-drop) mode: list entry is a distinct object from the loaded bundle and has no
+			// retrievable media, so re-selecting the loaded file must be a no-op, not a reload that hangs.
+			const cur = this.LoadedMetaDataService.getCurBndl();
+			const isLocalSame = this.ConfigProviderService.vals.main.comMode === 'EMBEDDED' && cur && bndl.name === cur.name;
+			if (bndl !== cur && !isLocalSame) {
 				this.HistoryService.resetToInitState();
 				this.ViewStateService.hierarchyState.reset();
 				this.LevelService.deleteEditArea();
@@ -256,7 +261,7 @@ export class DbObjLoadSaveService {
 				this.ViewStateService.setState('loadingSaving');
 
 				this.ViewStateService.somethingInProgress = true;
-				this.ViewStateService.somethingInProgressTxt = 'Loading bundle: ' + bndl.name;
+				this.ViewStateService.somethingInProgressTxt = t('progress.loadingBundle') + bndl.name;
 				this.SsffDataService.data = [];
 				let promise;
 				if(!url){
@@ -288,13 +293,13 @@ export class DbObjLoadSaveService {
 								}
 								return this.innerLoadBundle(bndl, bundleData, res);
 							}, (errMess) => {
-								this.ModalService.open('views/error.html', 'Error fetching audio file: ' + JSON.stringify(errMess)).then(() => {
+								this.ModalService.open('views/error.html', t('msg.audioFetch') + JSON.stringify(errMess)).then(() => {
 									this.AppStateService.resetToInitState();
 								});
 							});
 						}
 					} else {
-						this.ModalService.open('views/error.html', 'Error validating annotation file: ' + JSON.stringify(validRes, null, 4)).then(() => {
+						this.ModalService.open('views/error.html', t('msg.annotInvalid') + JSON.stringify(validRes, null, 4)).then(() => {
 							this.AppStateService.resetToInitState();
 						});
 					}
@@ -302,11 +307,11 @@ export class DbObjLoadSaveService {
 
 				}, (errMess) => {
 					if (errMess.data) {
-						this.ModalService.open('views/error.html', 'Error loading bundle: ' + errMess.data).then(() => {
+						this.ModalService.open('views/error.html', t('msg.bundleLoad') + errMess.data).then(() => {
 							this.AppStateService.resetToInitState();
 						});
 					} else {
-						this.ModalService.open('views/error.html', 'Error loading bundle: ' + errMess.status.message).then(() => {
+						this.ModalService.open('views/error.html', t('msg.bundleLoad') + errMess.status.message).then(() => {
 							this.AppStateService.resetToInitState();
 						});
 					}
@@ -322,7 +327,7 @@ export class DbObjLoadSaveService {
 			this.ViewStateService.somethingInProgress = true;
 			this.ViewStateService.setState('loadingSaving');
 			var bundleData = {} as any;
-			this.ViewStateService.somethingInProgressTxt = 'Creating bundle json...';
+			this.ViewStateService.somethingInProgressTxt = t('progress.creatingJson');
 			bundleData.ssffFiles = [];
 			const ssffPromises = this.SsffDataService.data.map((ssffFile) =>
 				this.SsffParserService.asyncJso2ssff(ssffFile).then((messParser) => {
@@ -337,7 +342,7 @@ export class DbObjLoadSaveService {
 				return Promise.all(ssffPromises).then(() => {
 					return this.getAnnotationAndSaveBndl(bundleData);
 				}, (errMess) => {
-					this.ModalService.open('views/error.html', 'Error converting SSFF file to binary: ' + (errMess.status ? errMess.status.message : errMess));
+					this.ModalService.open('views/error.html', t('msg.ssffConvert') + (errMess.status ? errMess.status.message : errMess));
 					return Promise.reject(errMess);
 				});
 			} else {
@@ -352,7 +357,7 @@ export class DbObjLoadSaveService {
 
 	public getAnnotationAndSaveBndl(bundleData): Promise<void> {
 
-		this.ViewStateService.somethingInProgressTxt = 'Validating annotJSON ...';
+		this.ViewStateService.somethingInProgressTxt = t('progress.validatingAnnot');
 
 		var validRes = this.ValidationService.validateJSO('annotationFileSchema', this.DataService.getData());
 		if (validRes !== true) {
@@ -378,28 +383,28 @@ export class DbObjLoadSaveService {
 			bundleData.comment = curBndl.comment;
 		}
 
-		this.ViewStateService.somethingInProgressTxt = 'Validating bundle ...';
+		this.ViewStateService.somethingInProgressTxt = t('progress.validatingBundle');
 		validRes = this.ValidationService.validateJSO('bundleSchema', bundleData);
 
 		if (validRes !== true) {
 			console.error('GRAVE PROBLEM: trying to save bundle but bundle is invalid. traverseAndClean() HAS ALREADY BEEN CALLED.');
 			console.error(validRes);
 
-			return this.ModalService.open('views/error.html', 'Somehow the data for this bundle has been corrupted. This is most likely a nasty and diffucult to spot bug. If you are at the IPS right now, please contact an EMU developer immediately. The Validation error is: ' + JSON.stringify(validRes, null, 4)).then(() => {
+			return this.ModalService.open('views/error.html', t('msg.bundleCorrupt') + JSON.stringify(validRes, null, 4)).then(() => {
 				this.ViewStateService.somethingInProgressTxt = '';
 				this.ViewStateService.somethingInProgress = false;
 				this.ViewStateService.setState('labeling');
 				return Promise.reject('Bundle validation failed');
 			});
 		} else {
-			this.ViewStateService.somethingInProgressTxt = 'Saving bundle...';
+			this.ViewStateService.somethingInProgressTxt = t('progress.saving');
 			return this.IoHandlerService.saveBundle(bundleData).then(() => {
-				this.ViewStateService.somethingInProgressTxt = 'Done!';
+				this.ViewStateService.somethingInProgressTxt = t('progress.done');
 				this.ViewStateService.somethingInProgress = false;
 				this.HistoryService.movesAwayFromLastSave = 0;
 				this.ViewStateService.setState('labeling');
 			}, (errMess) => {
-				this.ModalService.open('views/error.html', 'Error saving bundle: ' + errMess.status.message).then(() => {
+				this.ModalService.open('views/error.html', t('msg.bundleSave') + errMess.status.message).then(() => {
 					this.AppStateService.resetToInitState();
 				});
 				return Promise.reject(errMess);

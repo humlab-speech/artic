@@ -1,5 +1,8 @@
 <script lang="ts">
-	import TopMenu from './components/TopMenu.svelte';
+	import { t } from '../core/util/i18n';
+	import AppHeader from './components/shell/AppHeader.svelte';
+	import Toolbar from './components/shell/Toolbar.svelte';
+	import StartView from './components/shell/StartView.svelte';
 	import BottomMenu from './components/BottomMenu.svelte';
 	import ProgressBar from './components/ProgressBar.svelte';
 	import BundleListSidebar from './components/BundleListSidebar.svelte';
@@ -31,11 +34,13 @@
 		browserDetectorService,
 		handleGlobalKeystrokesService,
 		hierarchyLayoutService,
+		dataSourceService,
 	} from './stores/services';
+	import { tr } from './stores/i18n.svelte';
 	import { getTick, invalidate } from './stores/app-state.svelte';
 	import { eventBus } from '../core/util/event-bus';
 	import { safeGetItem, safeSetItem } from '../core/util/safe-storage';
-	import { styles } from '../core/util/styles';
+	import { motion } from '../core/theme/tokens';
 
 	// Initialize all core services (wires up dependencies)
 	initServices();
@@ -69,9 +74,6 @@
 	// Bind global keys
 	handleGlobalKeystrokesService.bindGlobalKeys();
 
-	// Init theme
-	configProviderService.initTheme();
-
 	// Event bus listeners
 	eventBus.on('connectionDisrupted').subscribe(() => {
 		appStateService.resetToInitState();
@@ -85,18 +87,18 @@
 	eventBus.on('reloadToInitState').subscribe((data: any) => {
 		loadDefaultConfig();
 		viewStateService.url = data.url;
-		viewStateService.somethingInProgressTxt = 'Connecting to server...';
+		viewStateService.somethingInProgressTxt = t('progress.connecting');
 		viewStateService.somethingInProgress = true;
 		ioHandlerService.WebSocketHandlerService.initConnect(data.url).then((message: any) => {
 			if (message.type === 'error') {
-				modalService.open('views/error.html', 'Could not connect to websocket server: ' + data.url).then(() => {
+				modalService.open('views/error.html', t('msg.noWs') + data.url).then(() => {
 					appStateService.resetToInitState();
 				});
 			} else {
 				handleConnectedToWSserver(data);
 			}
 		}, (errMess: any) => {
-			modalService.open('views/error.html', 'Could not connect to websocket server: ' + JSON.stringify(errMess, null, 4)).then(() => {
+			modalService.open('views/error.html', t('msg.noWs') + JSON.stringify(errMess, null, 4)).then(() => {
 				appStateService.resetToInitState();
 			});
 		});
@@ -127,14 +129,14 @@
 	function loadDefaultConfig() {
 		console.log('[artic] loadDefaultConfig called');
 		viewStateService.somethingInProgress = true;
-		viewStateService.somethingInProgressTxt = 'Loading schema files';
+		viewStateService.somethingInProgressTxt = t('progress.schemas');
 		invalidate();
 		validationService.loadSchemas().then((replies: any) => {
 			console.log('[artic] schemas loaded:', replies.length);
 			validationService.setSchemas(replies);
 			ioHandlerService.httpGetDefaultConfig().then((response: any) => {
 				console.log('[artic] config loaded');
-				viewStateService.somethingInProgressTxt = 'Validating articConfig';
+				viewStateService.somethingInProgressTxt = t('progress.validatingConfig');
 				const validRes = validationService.validateJSO('articConfigSchema', response.data);
 				if (validRes === true) {
 					configProviderService.setVals(response.data);
@@ -145,21 +147,21 @@
 					viewStateService.somethingInProgress = false;
 					invalidate();
 				} else {
-					modalService.open('views/error.html', 'Error validating / checking articConfigSchema: ' + JSON.stringify(validRes, null, 4)).then(() => {
+					modalService.open('views/error.html', t('msg.schemaCheck') + JSON.stringify(validRes, null, 4)).then(() => {
 						appStateService.resetToInitState();
 						invalidate();
 					});
 					invalidate();
 				}
 			}, (response: any) => {
-				modalService.open('views/error.html', 'Could not get defaultConfig for Artic: status: ' + response.status).then(() => {
+				modalService.open('views/error.html', t('msg.noDefaultConfig') + response.status).then(() => {
 					appStateService.resetToInitState();
 					invalidate();
 				});
 				invalidate();
 			});
 		}, (errMess: any) => {
-			modalService.open('views/error.html', 'Error loading schema file: ' + JSON.stringify(errMess, null, 4)).then(() => {
+			modalService.open('views/error.html', t('msg.schemaLoad') + JSON.stringify(errMess, null, 4)).then(() => {
 				appStateService.resetToInitState();
 				invalidate();
 			});
@@ -169,7 +171,7 @@
 
 	function handleDefaultConfigLoaded() {
 		if (!viewStateService.getBundleListSideBarOpen()) {
-			viewStateService.toggleBundleListSideBar(styles.animationPeriod);
+			viewStateService.toggleBundleListSideBar(motion.period);
 		}
 		const searchParams = new URLSearchParams(window.location.search);
 		if (configProviderService.vals.main.autoConnect || searchParams.get('autoConnect') === 'true') {
@@ -180,14 +182,14 @@
 			if (searchParams.get('comMode') !== 'GITLAB') {
 				ioHandlerService.WebSocketHandlerService.initConnect(serverUrl).then((message: any) => {
 					if (message.type === 'error') {
-						modalService.open('views/error.html', 'Could not connect to websocket server: ' + serverUrl).then(() => {
+						modalService.open('views/error.html', t('msg.noWs') + serverUrl).then(() => {
 							appStateService.resetToInitState();
 						});
 					} else {
 						handleConnectedToWSserver({ session: null, reload: null });
 					}
 				}, (errMess: any) => {
-					modalService.open('views/error.html', 'Could not connect to websocket server: ' + JSON.stringify(errMess, null, 4)).then(() => {
+					modalService.open('views/error.html', t('msg.noWs') + JSON.stringify(errMess, null, 4)).then(() => {
 						appStateService.resetToInitState();
 					});
 				});
@@ -207,12 +209,13 @@
 			configProviderService.vals.spectrogramSettings.heatMapColorAnchors,
 			configProviderService.vals.spectrogramSettings.invert,
 		);
-		viewStateService.setTransitionTime(styles.animationPeriod);
+		viewStateService.setTransitionTime(motion.period);
 	}
 
 	function handleConnectedToWSserver(data: any) {
 		const session = data.session;
 		const reload = data.reload;
+		dataSourceService.set('server');
 		viewStateService.showDropZone = false;
 		const searchParams = new URLSearchParams(window.location.search);
 		if (searchParams.get('comMode') !== 'GITLAB') {
@@ -220,10 +223,10 @@
 		}
 		configProviderService.vals.activeButtons.openDemoDB = false;
 		viewStateService.somethingInProgress = true;
-		viewStateService.somethingInProgressTxt = 'Checking protocol...';
+		viewStateService.somethingInProgressTxt = t('progress.protocol');
 		ioHandlerService.getProtocol().then((res: any) => {
 			if (res.protocol === 'EMU-webApp-websocket-protocol' && res.version === '0.0.2') {
-				viewStateService.somethingInProgressTxt = 'Checking user management...';
+				viewStateService.somethingInProgressTxt = t('progress.userMgmt');
 				ioHandlerService.getDoUserManagement().then((doUsrData: any) => {
 					if (doUsrData === 'NO') {
 						innerHandleConnectedToWSserver({ session, reload });
@@ -239,7 +242,7 @@
 				});
 			} else {
 				modalService.open('views/error.html',
-					'Could not connect: protocol mismatch. Server: "' + res.protocol + '" v' + res.version
+					t('msg.protocolMismatch') + res.protocol + '" v' + res.version
 				).then(() => {
 					appStateService.resetToInitState();
 				});
@@ -250,7 +253,7 @@
 	function innerHandleConnectedToWSserver(data: any) {
 		const session = data.session;
 		const reload = data.reload;
-		viewStateService.somethingInProgressTxt = 'Loading DB config...';
+		viewStateService.somethingInProgressTxt = t('progress.dbConfig');
 		ioHandlerService.getDBconfigFile().then((dbData: any) => {
 			viewStateService.curPerspectiveIdx = 0;
 			configProviderService.setVals(dbData.EMUwebAppConfig);
@@ -272,7 +275,7 @@
 				viewStateService.setHierarchySettings(hierarchyLayoutService.findAllNonPartialPaths().possible[0]);
 				const validRes2 = validationService.validateJSO('DBconfigFileSchema', dbData);
 				if (validRes2 === true) {
-					viewStateService.somethingInProgressTxt = 'Loading bundle list...';
+					viewStateService.somethingInProgressTxt = t('progress.bundleList');
 					ioHandlerService.getBundleList().then((bdata: any) => {
 						loadedMetaDataService.setBundleList(bdata);
 						configProviderService.vals.activeButtons.clear = true;
@@ -284,12 +287,12 @@
 						}
 					});
 				} else {
-					modalService.open('views/error.html', 'Error validating DBconfig: ' + JSON.stringify(validRes2, null, 4)).then(() => {
+					modalService.open('views/error.html', t('msg.dbConfigInvalid') + JSON.stringify(validRes2, null, 4)).then(() => {
 						appStateService.resetToInitState();
 					});
 				}
 			} else {
-				modalService.open('views/error.html', 'Error validating articConfig: ' + JSON.stringify(validRes, null, 4)).then(() => {
+				modalService.open('views/error.html', t('msg.configInvalid') + JSON.stringify(validRes, null, 4)).then(() => {
 					appStateService.resetToInitState();
 				});
 			}
@@ -301,10 +304,11 @@
 		const audioGetUrl = searchParams.get('audioGetUrl');
 		const bndlJsonGetUrl = searchParams.get('bndlJsonGetUrl');
 		if (!audioGetUrl && !bndlJsonGetUrl) return;
+		dataSourceService.set('url');
 
 		if (audioGetUrl) {
 			if (!configProviderService.validateGetUrl(audioGetUrl)) {
-				modalService.open('views/error.html', 'Invalid audioGetUrl: must use http(s) protocol');
+				modalService.open('views/error.html', t('msg.badAudioUrl'));
 				return;
 			}
 			configProviderService.embeddedVals.audioGetUrl = audioGetUrl;
@@ -312,13 +316,13 @@
 			ioHandlerService.httpGetPath(audioGetUrl, 'arraybuffer').then((data: any) => {
 				handleEmbeddedAudioLoaded(data, searchParams);
 			}, (errMess: any) => {
-				modalService.open('views/error.html', 'Could not get audio file: ' + audioGetUrl + ' ERROR: ' + JSON.stringify(errMess, null, 4));
+				modalService.open('views/error.html', t('msg.noAudio') + audioGetUrl + t('msg.errorSep') + JSON.stringify(errMess, null, 4));
 			});
 		} else if (bndlJsonGetUrl) {
 			ioHandlerService.httpGetPath(bndlJsonGetUrl, 'application/json').then((data: any) => {
 				handleEmbeddedAudioLoaded(data, searchParams);
 			}, (errMess: any) => {
-				modalService.open('views/error.html', 'Could not get bundle JSON: ' + JSON.stringify(errMess, null, 4));
+				modalService.open('views/error.html', t('msg.noBundleJson') + JSON.stringify(errMess, null, 4));
 			});
 		}
 	}
@@ -329,10 +333,10 @@
 		loadedMetaDataService.setCurBndlName(audioUrl.substring(audioUrl.lastIndexOf('/') + 1, audioUrl.lastIndexOf('.')));
 
 		if (viewStateService.getBundleListSideBarOpen() && searchParams.get('saveToWindowParent') !== 'true') {
-			viewStateService.toggleBundleListSideBar(styles.animationPeriod);
+			viewStateService.toggleBundleListSideBar(motion.period);
 		}
 
-		viewStateService.somethingInProgressTxt = 'Loading DB config...';
+		viewStateService.somethingInProgressTxt = t('progress.dbConfig');
 		const DBconfigGetUrl = searchParams.get('DBconfigGetUrl') || 'configFiles/embedded_articConfig.json';
 
 		ioHandlerService.httpGetPath(DBconfigGetUrl).then((resp: any) => {
@@ -340,7 +344,7 @@
 			configProviderService.setVals(resp.data.EMUwebAppConfig);
 			const validRes = validationService.validateJSO('articConfigSchema', configProviderService.vals);
 			if (validRes !== true) {
-				modalService.open('views/error.html', 'Error validating articConfig: ' + JSON.stringify(validRes, null, 4));
+				modalService.open('views/error.html', t('msg.configInvalid') + JSON.stringify(validRes, null, 4));
 				return;
 			}
 			if (configProviderService.embeddedVals.fromUrlParams) {
@@ -349,7 +353,7 @@
 			configProviderService.curDbConfig = resp.data;
 			const validRes2 = validationService.validateJSO('DBconfigFileSchema', configProviderService.curDbConfig);
 			if (validRes2 !== true) {
-				modalService.open('views/error.html', 'Error validating DBconfig: ' + JSON.stringify(validRes2, null, 4));
+				modalService.open('views/error.html', t('msg.dbConfigInvalid') + JSON.stringify(validRes2, null, 4));
 				return;
 			}
 			if (searchParams.get('saveToWindowParent') === 'true') {
@@ -360,7 +364,7 @@
 			loadedMetaDataService.setCurBndl(bndlList[0]);
 
 			viewStateService.somethingInProgress = true;
-			viewStateService.somethingInProgressTxt = 'Parsing audio file...';
+			viewStateService.somethingInProgressTxt = t('progress.parsingAudio');
 
 			const audioGetUrl = searchParams.get('audioGetUrl');
 			if (audioGetUrl) {
@@ -375,14 +379,14 @@
 					if (labelGetUrl) {
 						const respType = 'text';
 						ioHandlerService.httpGetPath(labelGetUrl, respType).then((data2: any) => {
-							viewStateService.somethingInProgressTxt = 'Parsing ' + configProviderService.embeddedVals.labelType + ' file...';
+							viewStateService.somethingInProgressTxt = t('progress.parsingFile', { type: configProviderService.embeddedVals.labelType });
 							ioHandlerService.parseLabelFile(data2.data, labelGetUrl, 'embeddedTextGrid', configProviderService.embeddedVals.labelType).then(async (annot: any) => {
 								dataService.setData(annot);
 								if (!searchParams.get('DBconfigGetUrl')) {
 									await generateLevelDefsFromAnnotation(annot);
 								}
 								viewStateService.setCurLevelAttrDefs(configProviderService.curDbConfig.levelDefinitions);
-								viewStateService.somethingInProgressTxt = 'Done!';
+								viewStateService.somethingInProgressTxt = t('progress.done');
 								viewStateService.somethingInProgress = false;
 								viewStateService.setState('labeling');
 								invalidate();
@@ -392,7 +396,7 @@
 						configProviderService.vals.activeButtons.downloadAnnotation = false;
 						configProviderService.vals.activeButtons.downloadTextGrid = false;
 						configProviderService.vals.activeButtons.search = false;
-						viewStateService.somethingInProgressTxt = 'Done!';
+						viewStateService.somethingInProgressTxt = t('progress.done');
 						viewStateService.somethingInProgress = false;
 						viewStateService.setState('labeling');
 						invalidate();
@@ -405,7 +409,7 @@
 				}
 			}
 		}, (errMess: any) => {
-			modalService.open('views/error.html', 'Could not get embedded_config.json: ' + errMess);
+			modalService.open('views/error.html', t('msg.noEmbeddedConfig') + errMess);
 		});
 	}
 
@@ -447,11 +451,14 @@
 	let somethingInProgress = $derived(getTick() >= 0 && viewStateService.somethingInProgress);
 	let somethingInProgressTxt = $derived(getTick() >= 0 ? viewStateService.somethingInProgressTxt : '');
 	let curBndlName = $derived(getTick() >= 0 ? loadedMetaDataService.getCurBndlName() : '');
+	let chrome = $derived(getTick() >= 0 ? configProviderService.getChrome() : 'full');
+	let showStartView = $derived(getTick() >= 0 && dataSourceService.capabilities.showStartView);
 </script>
 
 <svelte:window on:resize={onResize} on:beforeunload={onBeforeUnload} />
 
 <div class="artic">
+<AppHeader {chrome} />
 <div class="artic-main" id="MainCtrl"
 	onmouseenter={() => viewStateService.mouseInEmuWebApp = true}
 	onmouseleave={() => viewStateService.mouseInEmuWebApp = false}
@@ -469,17 +476,20 @@
 			txt={somethingInProgressTxt}
 		/>
 
-		<div class="printTitle">artic : {curBndlName}</div>
+		<div class="printTitle">{tr('print.title', { name: curBndlName })}</div>
 
-		<TopMenu />
+		{#if !showStartView || chrome === 'toolbar'}<Toolbar {chrome} />{/if}
 
 		<div class="artic-canvas">
+			{#if showStartView}
+				<StartView showFooter={chrome === 'full'} />
+			{/if}
 			<HistoryActionPopup />
 			<SignalArea />
 			<TwoDimPanel />
 		</div>
 
-		<BottomMenu />
+		{#if !showStartView}<BottomMenu />{/if}
 	</div>
 
 	<PerspectivesSidebar />
@@ -500,7 +510,7 @@
 	@media print {
 		.printTitle {
 			display: block;
-			font-size: 18px;
+			font-size: var(--sb-size-lg);
 			font-weight: bold;
 			padding: 8px;
 		}

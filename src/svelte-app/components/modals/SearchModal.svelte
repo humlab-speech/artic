@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { tr } from '../../stores/i18n.svelte';
+	import Button from '../ui/Button.svelte';
 	import { modalService, viewStateService, hierarchyLayoutService, levelService, loadedMetaDataService, configProviderService, standardFuncsService, dataService } from '../../stores/services';
 
 	const hierPaths = hierarchyLayoutService.findAllNonPartialPaths();
@@ -68,49 +70,49 @@
 
 <div class="artic-modal-wrap">
 	<div class="artic-modal-header-large artic-modal-header">
-		<h3 id="modalHeading">Search Current Bundle Annotation</h3>
+		<h3 id="modalHeading">{tr('search.title')}</h3>
 	</div>
 	<div class="artic-modal-body">
 		<div class="artic-text">
-			<h2>Select hierarchy path to search in</h2>
+			<h2>{tr('search.path')}</h2>
 			<select bind:value={curHierPathIdx} onchange={changedHierPath}>
 				{#each hierPaths.possibleAsStr as pathStr, idx}
 					<option value={idx}>{pathStr}</option>
 				{/each}
 			</select>
 
-			<h2>Select level in path</h2>
+			<h2>{tr('search.level')}</h2>
 			<select bind:value={curLevel} onchange={changedLevel}>
 				{#each curLevels as lvl}
 					<option value={lvl}>{lvl}</option>
 				{/each}
 			</select>
 
-			<h2>Select attribute definition</h2>
+			<h2>{tr('search.attrDef')}</h2>
 			<select bind:value={curAttrDef} onchange={changedAttrDef}>
 				{#each curAttrDefs as ad}
 					<option value={ad}>{ad}</option>
 				{/each}
 			</select>
 
-			<h2>Search string</h2>
+			<h2>{tr('search.string')}</h2>
 			<input type="text" bind:value={searchString} onfocus={onFocus} onblur={onBlur} /><br />
 			Use RegEx Search: <input type="checkbox" bind:checked={useRegExSearch} /><br />
-			<button onclick={search}>Search</button>
+			<button onclick={search}>{tr('search.search')}</button>
 
 			{#if resultTimeAnchors.length > 0}
-				<h2>Search result</h2>
+				<h2>{tr('search.result')}</h2>
 				<table class="artic-modalTable"><tbody>
-					<tr><td>search string</td><td>sample_start</td><td>sample_end</td></tr>
+					<tr><td>{tr('search.colString')}</td><td>sample_start</td><td>sample_end</td></tr>
 					{#each resultTimeAnchors as ta}
-						<tr onclick={() => previewTimeAnchor(ta)} style="cursor:pointer" title="Click to preview in timeline"><td>{ta.label}</td><td>{ta.sample_start}</td><td>{ta.sample_end}</td></tr>
+						<tr onclick={() => previewTimeAnchor(ta)} style="cursor:pointer" title={tr('search.preview')}><td>{ta.label}</td><td>{ta.sample_start}</td><td>{ta.sample_end}</td></tr>
 					{/each}
 				</tbody></table>
 			{/if}
 		</div>
 	</div>
 	<div class="artic-modal-footer">
-		<button class="artic-mini-btn" onclick={() => modalService.close()}>Cancel</button>
-		<button class="artic-mini-btn" id="artic-modal-save" onclick={saveTimeAnchors}>Save search result as time anchors</button>
+		<Button label={tr('dialog.close')} onclick={() => modalService.close()} />
+		<Button id="artic-modal-save" variant="primary" label={tr('search.saveAnchors')} onclick={saveTimeAnchors} />
 	</div>
 </div>

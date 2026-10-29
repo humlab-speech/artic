@@ -31,7 +31,7 @@ const manifest = {
 	gitSha,
 	builtAt: new Date().toISOString(),
 	protocol: { name: 'EMU-webApp-websocket-protocol', version: '0.0.2' },
-	features: ['bundleList', 'timeAnchors', 'generatorTracks', 'fromIndexTracks']
+	features: ['bundleList', 'timeAnchors', 'generatorTracks', 'fromIndexTracks', 'dataSourceModes', 'theming', 'i18n', 'chromeLevels']
 };
 
 const out = path.join(dist, 'artic-manifest.json');

@@ -24,6 +24,8 @@ export interface ISpectroSettings {
 	preEmphasisFilterFactor: number;
 	heatMapColorAnchors?: number[][];
 	invert?: boolean;
+	/** 'theme': invert follows the theme (light theme = dark energy on white); 'user': the Settings checkbox wins */
+	invertSource?: 'theme' | 'user';
 }
 
 export interface IOsciSettings {

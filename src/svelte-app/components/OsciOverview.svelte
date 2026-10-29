@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount, onDestroy } from 'svelte';
 	import { getViewportTick } from '../stores/app-state.svelte';
 	import { viewStateService, soundHandlerService, drawHelperService } from '../stores/services';
@@ -10,8 +12,6 @@
 	let prevBundleName: string | undefined;
 
 	// Colors (matching artic-design.scss)
-	const COLOR_TRANSPARENT_LIGHT_GREY = 'rgba(152, 152, 152, 0.18)';
-	const COLOR_WHITE = '#F1EFE4';
 
 	function hasAudioBuffer(): boolean {
 		return soundHandlerService.audioBuffer && typeof soundHandlerService.audioBuffer.length === 'number' && soundHandlerService.audioBuffer.length > 0;
@@ -34,9 +34,9 @@
 		const posE = (markupCanvas.width / bufLen) * viewStateService.curViewPort.eS;
 
 		ctx.clearRect(0, 0, markupCanvas.width, markupCanvas.height);
-		ctx.fillStyle = COLOR_TRANSPARENT_LIGHT_GREY;
+		ctx.fillStyle = cs().color.selectionFill;
 		ctx.fillRect(posS, 0, posE - posS, markupCanvas.height);
-		ctx.strokeStyle = COLOR_WHITE;
+		ctx.strokeStyle = cs().color.signal;
 		ctx.beginPath();
 		ctx.moveTo(posS, 0);
 		ctx.lineTo(posS, markupCanvas.height);
@@ -189,7 +189,7 @@
 	ontouchmove={handleTouchMove}
 	ontouchend={handleTouchEnd}
 >
-	<canvas bind:this={canvas} class="artic-preview-canvas" style="background: #000; border: 1px solid gray; width: 100%; height: 100%;"></canvas>
+	<canvas bind:this={canvas} class="artic-preview-canvas" style="background: var(--sb-canvas-bg); border: 1px solid var(--sb-border-control); width: 100%; height: 100%;"></canvas>
 	<canvas bind:this={markupCanvas} class="artic-preview-canvas-markup" style="width: 100%; height: 100%;"></canvas>
 </div>
 

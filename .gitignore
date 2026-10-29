@@ -76,3 +76,7 @@ dist/
 /.tmp
 /.sass-cache
 .worktrees/
+test/playwright/__captures__/
+test-results/
+playwright-report/
+.gstack/

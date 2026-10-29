@@ -1,4 +1,5 @@
 import { deepCopy } from '../util/deep-copy';
+import { themeService } from './theme.service';
 
 export class ConfigProviderService {
 	ViewStateService!: any;
@@ -29,27 +30,28 @@ export class ConfigProviderService {
 		Object.assign(this, deps);
 	}
 
+	/** How much application chrome to render: URL ?chrome=, then main.chrome from the config, then 'full'. */
+	public getChrome(search: string = typeof window !== 'undefined' ? window.location.search : ''): 'full' | 'embedded' | 'toolbar' {
+		const ok = (v: unknown): v is 'full' | 'embedded' | 'toolbar' => v === 'full' || v === 'embedded' || v === 'toolbar';
+		const fromUrl = new URLSearchParams(search).get('chrome');
+		if (ok(fromUrl)) return fromUrl;
+		const fromConfig = this.vals?.main?.chrome;
+		return ok(fromConfig) ? fromConfig : 'full';
+	}
+
+	/** @deprecated use themeService; kept because hosts may call these. */
 	public initTheme() {
-		const savedTheme = localStorage.getItem('artic-theme');
-		if (savedTheme) {
-			this.setTheme(savedTheme as any);
-		}
-		// Default is dark (no data-theme attribute needed) — matches original EMU-webApp
+		themeService.init();
 	}
 
+	/** @deprecated use themeService.setPreference */
 	public setTheme(theme: 'light' | 'dark') {
-		localStorage.setItem('artic-theme', theme);
-		const htmlElement = document.documentElement;
-		if (theme === 'light') {
-			htmlElement.setAttribute('data-theme', 'light');
-		} else {
-			htmlElement.removeAttribute('data-theme');
-		}
+		themeService.setPreference(theme);
 	}
 
+	/** @deprecated use themeService.resolved */
 	public getTheme(): string {
-		const theme = localStorage.getItem('artic-theme');
-		return theme || 'dark';
+		return themeService.resolved;
 	}
 
 	private onlyUnique(value, index, self) {
@@ -195,11 +197,9 @@ export class ConfigProviderService {
 	};
 
 	public getAttrDefsNames(levelName) {
-		var res = [];
-		this.getLevelDefinition(levelName).attributeDefinitions.forEach((ad) => {
-			res.push(ad.name);
-		});
-		return res;
+		// attributeDefinitions is an array, a single definition object (legacy), or absent
+		const defs = this.getLevelDefinition(levelName).attributeDefinitions;
+		return (Array.isArray(defs) ? defs : defs ? [defs] : []).map((ad) => ad.name);
 	};
 
 	public setPerspectivesOrder(curPerspective, levelName) {

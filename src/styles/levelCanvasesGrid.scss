@@ -1,25 +1,24 @@
-@use 'artic-design' as *;
 @use 'font' as *;
 @use 'mixins' as *;
 
 .allLevelCanvasesGrid {
   display: grid;
-  border: 1px solid #D7B17C;
-  background-color: #F1EFE4;
+  border: 1px solid var(--sb-border-control);
+  background-color: var(--sb-canvas-tier-bg);
   margin-top: 25px;
 
   .levelCanvasGrid {
     display: grid;
-    border: 1px solid #D7B17C;
-    background-color: rgba(215, 177, 124, 0.4);
-    color: #000000;
+    border: 1px solid var(--sb-border-control);
+    background-color: var(--sb-canvas-tier-bg);
+    color: var(--sb-canvas-text);
     height: 64px;
     grid-template-columns: 1fr 20px;
     .levelCanvasArea{
-      border: 1px solid #D7B17C;
+      border: 1px solid var(--sb-border-control);
     }
     .levelCanvasButtonGrid {
-      border: 1px solid #D7B17C;
+      border: 1px solid var(--sb-border-control);
       display: grid;
       height: 100%;
     }

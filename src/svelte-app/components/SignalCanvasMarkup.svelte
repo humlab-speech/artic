@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount } from 'svelte';
 	import { getViewportTick, getMarkupTick, invalidate, invalidateMarkup } from '../stores/app-state.svelte';
 	import {
@@ -9,7 +11,6 @@
 		historyService,
 		soundHandlerService,
 	} from '../stores/services';
-	import { styles } from '../../core/util/styles';
 	import { getCanvasX, getCanvasY, hasAudioBuffer } from '../utils/canvas-interaction';
 
 	let { trackName }: { trackName: string } = $props();
@@ -117,8 +118,8 @@
 					* canvas.height;
 
 				// new value
-				ctx.strokeStyle = 'black';
-				ctx.fillStyle = 'black';
+				ctx.strokeStyle = cs().color.text;
+				ctx.fillStyle = cs().color.text;
 				ctx.beginPath();
 				ctx.arc(x, yNew - 1, 2, 0, 2 * Math.PI, false);
 				ctx.closePath();
@@ -126,8 +127,8 @@
 				ctx.fill();
 
 				// old value
-				ctx.strokeStyle = styles.colorCursor;
-				ctx.fillStyle = styles.colorCursor;
+				ctx.strokeStyle = cs().color.cursor;
+				ctx.fillStyle = cs().color.cursor;
 				ctx.beginPath();
 				ctx.arc(x, yOld - 1, 2, 0, 2 * Math.PI, false);
 				ctx.closePath();
@@ -144,7 +145,7 @@
 		drawMarkup();
 		const posS = viewStateService.getPos(canvas.width, viewStateService.playHeadAnimationInfos.sS);
 		const posCur = viewStateService.getPos(canvas.width, viewStateService.playHeadAnimationInfos.curS);
-		ctx.fillStyle = styles.colorTransparentLightGrey;
+		ctx.fillStyle = cs().color.playedFill;
 		ctx.fillRect(posS, 0, posCur - posS, canvas.height);
 	}
 

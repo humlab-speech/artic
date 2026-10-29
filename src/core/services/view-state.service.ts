@@ -64,6 +64,8 @@ export class ViewStateService{
 	public curLevelAttrDefs: any;
 	public curViewPort: IViewPort;
 	public spectroSettings: ISpectroSettings;
+	/** True while a menu popover is open; global keyboard shortcuts are suspended meanwhile. */
+	public menuOpen: boolean = false;
 	public osciSettings: IOsciSettings;
 	public playHeadAnimationInfos: IPlayHeadAnimationInfos;
 	public hierarchyState: any;
@@ -299,7 +301,8 @@ export class ViewStateService{
 
 	public getViewPort() { return this.curViewPort; };
 
-	public setspectroSettings(len, rfrom, rto, dyn, win, hm, preEmph, hmColorAnchors, invert) {
+	public setspectroSettings(len, rfrom, rto, dyn, win, hm, preEmph, hmColorAnchors, invert, fromUser = false) {
+		if (fromUser) this.spectroSettings.invertSource = 'user';
 		this.spectroSettings.windowSizeInSecs = len;
 		this.spectroSettings.rangeFrom = parseInt(rfrom, 10);
 		this.spectroSettings.rangeTo = parseInt(rto, 10);

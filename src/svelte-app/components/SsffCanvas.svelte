@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCanvasStyle } from '../../core/theme/canvas-style';
+	const cs = getCanvasStyle;
 	import { onMount } from 'svelte';
 	import { getViewportTick } from '../stores/app-state.svelte';
 	import {
@@ -7,11 +9,9 @@
 		ssffDataService,
 		fontScaleService,
 	} from '../stores/services';
-	import { styles } from '../../core/util/styles';
 
 	let { trackName }: { trackName: string } = $props();
 
-	const CONTOUR_COLORS = ['#EABAB9','#D7B17C','#C9918A','#9C7A8C','#B87D5E','#8B8FAE','#73A790','#C4D4C0'];
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -74,7 +74,7 @@
 			horizontalLines.yValues.forEach((yVal: number) => {
 				ctx.beginPath();
 				ctx.lineWidth = 9.6 as any;
-				ctx.strokeStyle = 'blue';
+				ctx.strokeStyle = cs().color.selectionEdge;
 				ctx.globalAlpha = 0.75;
 				const zeroY = canvas.height - ((yVal - minVal) / (maxVal - minVal) * canvas.height);
 				ctx.moveTo(0, zeroY);
@@ -97,7 +97,7 @@
 						contourNr <= minMaxContourLims.maxContourIdx)
 				) {
 					// set color
-					ctx.strokeStyle = CONTOUR_COLORS[contourNr % CONTOUR_COLORS.length];
+					ctx.strokeStyle = cs().color.contours[contourNr % cs().color.contours.length];
 					ctx.fillStyle = ctx.strokeStyle;
 
 					// overwrite color settings if preconfigured
@@ -120,8 +120,8 @@
 						trackName === 'SPEC' &&
 						assignmentTrackName !== ''
 					) {
-						ctx.strokeStyle = '#F0581A';
-						ctx.fillStyle = '#F0581A';
+						ctx.strokeStyle = cs().color.cursor;
+						ctx.fillStyle = cs().color.cursor;
 					}
 
 					ctx.lineWidth = 1.5;
@@ -172,21 +172,21 @@
 				}
 			});
 		} else {
-			ctx.strokeStyle = 'red';
-			const fontSize = parseInt(styles.fontSmallSize.slice(0, -2)) / 1.05;
+			ctx.strokeStyle = cs().color.error;
+			const fontSize = cs().size.sm / 1.05;
 			if (nrOfSamples <= 2) {
 				fontScaleService.drawUndistortedTextTwoLines(
 					ctx, 'Zoom out to', 'see contour(s)',
-					fontSize, styles.fontSmallFamily,
+					fontSize, cs().family.data,
 					canvas.width / 2 - (ctx.measureText('see contour(s)').width * ctx.canvas.width / ctx.canvas.offsetWidth / 2),
-					25, styles.colorTransparentRed
+					25, cs().color.error
 				);
 			} else {
 				fontScaleService.drawUndistortedTextTwoLines(
 					ctx, 'Zoom in to', 'see contour(s)',
-					fontSize, styles.fontSmallFamily,
+					fontSize, cs().family.data,
 					canvas.width / 2 - (ctx.measureText('see contour(s)').width * ctx.canvas.width / ctx.canvas.offsetWidth / 2),
-					25, styles.colorTransparentRed
+					25, cs().color.error
 				);
 			}
 		}

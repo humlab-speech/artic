@@ -1,4 +1,3 @@
-@use 'artic-design' as *;
 @use 'font' as *;
 @use 'mixins' as *;
 
@@ -11,7 +10,7 @@
     height: calc(100% - 12px);
     width: calc(100% - 12px);
     padding: 0px;
-    background-color: var(--color-white);
+    background-color: var(--sb-canvas-bg);
     canvas {
         float: left;
         margin: 0px;
@@ -25,7 +24,7 @@
         z-index: 1;
         width: 100%;
         height: 100%;
-        background-color: var(--color-black);
+        background-color: var(--sb-canvas-bg);
         //border: 1px solid $color-grey;
     }
 

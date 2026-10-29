@@ -1,13 +1,44 @@
 import { AudioBufferLike } from './audio-buffer-like';
 
 let libavInstance: any = null;
+let libavFatInstance: any = null;
+
+// ASF container (.wma/.asf) header GUID 3026B275-8E66-CF11-A6D9-00AA0062CE6C
+const ASF_MAGIC = [0x30, 0x26, 0xb2, 0x75, 0x8e, 0x66, 0xcf, 0x11];
+
+function isASF(buf: ArrayBuffer): boolean {
+	const head = new Uint8Array(buf, 0, Math.min(8, buf.byteLength));
+	return head.length === 8 && ASF_MAGIC.every((b, i) => head[i] === b);
+}
+
+// URLs held in variables so Vite's import analysis skips them (public/ files can't be statically imported)
+function libavUrl(name: string): string {
+	return new URL('libav/' + name, document.baseURI).href;
+}
 
 async function getLibAV(): Promise<any> {
 	if (libavInstance) return libavInstance;
-	// Dynamic import from public/ — not bundled, fetched on demand
-	const libav = await import(/* @vite-ignore */ '/libav/libav-default.mjs');
+	const libav = await import(/* @vite-ignore */ libavUrl('libav-default.mjs'));
 	libavInstance = await libav.LibAV({ noworker: true });
 	return libavInstance;
+}
+
+// Fat build (~30 MB): adds ASF demuxer + WMA codecs. Loaded only for ASF input.
+async function getLibAVFat(): Promise<any> {
+	if (libavFatInstance) return libavFatInstance;
+	// The fat WASM mjs assigns `global._scriptDir` (Node pattern); polyfill `global` only while loading.
+	const hadGlobal = 'global' in globalThis;
+	if (!hadGlobal) (globalThis as any).global = globalThis;
+	try {
+		const m = await import(/* @vite-ignore */ libavUrl('libav-fat.mjs'));
+		libavFatInstance = await m.default.LibAV({
+			noworker: true, // worker mode hangs with the fat build
+			wasmurl: libavUrl('libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm'),
+		});
+	} finally {
+		if (!hadGlobal) delete (globalThis as any).global;
+	}
+	return libavFatInstance;
 }
 
 /**
@@ -15,7 +46,7 @@ async function getLibAV(): Promise<any> {
  * Returns channel data + sample rate, compatible with AudioBufferLike.
  */
 export async function decodeWithLibAV(buf: ArrayBuffer): Promise<{ audioBuffer: AudioBufferLike }> {
-	const libav = await getLibAV();
+	const libav = isASF(buf) ? await getLibAVFat() : await getLibAV();
 
 	// Write input to virtual filesystem
 	const filename = 'input.audio';

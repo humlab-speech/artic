@@ -10,14 +10,16 @@ export class AppStateService {
 	DataService!: any;
 	SsffDataService!: any;
 	HistoryService!: any;
+	DataSourceService!: any;
 
 	initDeps(deps: {
 		DragnDropService: any; DragnDropDataService: any; ViewStateService: any;
 		IoHandlerService: any; LoadedMetaDataService: any; SoundHandlerService: any;
-		DataService: any; SsffDataService: any; HistoryService: any;
+		DataService: any; SsffDataService: any; HistoryService: any; DataSourceService?: any;
 	}) { Object.assign(this, deps); }
 
 	public resetToInitState() {
+		this.DataSourceService?.set('none');
 		if(this.IoHandlerService.WebSocketHandlerService.isConnected()) {
 			this.IoHandlerService.WebSocketHandlerService.disconnectWarning().then(() => {
 				console.info('Closing websocket connection to server');

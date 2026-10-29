@@ -1,3 +1,4 @@
+import { t } from '../util/i18n';
 import { eventBus } from '../util/event-bus';
 import { scheduleUpdate } from '../util/schedule-update';
 
@@ -57,17 +58,17 @@ export class WebSocketHandlerService{
 			} else {
 				this.closeConnect();
 				eventBus.emit('resetToInitState');
-				scheduleUpdate(() => { this.ModalService.open('views/error.html', 'Communication error with server! Error message is: ' + messageObj.status.message); });
+				scheduleUpdate(() => { this.ModalService.open('views/error.html', t('msg.wsComm') + messageObj.status.message); });
 			}
 			delete this.callbacks[messageObj.callbackID];
 		} else {
 			if(typeof messageObj.status === 'undefined'){
-				this.ModalService.open('views/error.html', 'Just got JSON message from server that artic does not know how to deal with! This is not allowed!');
+				this.ModalService.open('views/error.html', t('msg.wsUnknownJson'));
 			}
 			else if (messageObj.status.type === 'ERROR:TIMEOUT') {
 				// do nothing
 			} else {
-				this.ModalService.open('views/error.html', 'Received invalid messageObj.callbackID that could not be resolved to a request! This should not happen and indicates a bad server response! The invalid callbackID was: ' + messageObj.callbackID);
+				this.ModalService.open('views/error.html', t('msg.wsBadCallback') + messageObj.callbackID);
 			}
 		}
 	}
@@ -87,7 +88,7 @@ export class WebSocketHandlerService{
 			var jsonMessage = JSON.parse(message.data);
 			this.listener(jsonMessage);
 		}catch(e){
-			this.ModalService.open('views/error.html', 'Got non-JSON string as message from server! This is not allowed! The message was: ' + message.data + ' which caused the JSON.parse error: ' + e).then(() => {
+			this.ModalService.open('views/error.html', t('msg.wsNonJson') + message.data + t('msg.wsParseErr') + e).then(() => {
 				this.closeConnect();
 				eventBus.emit('resetToInitState');
 			});
@@ -102,7 +103,7 @@ export class WebSocketHandlerService{
 
 	private wsonclose(message) {
 		if (!message.wasClean && this.connected) {
-			this.ModalService.open('views/error.html', 'A non clean disconnect to the server occurred! This probably means that the server is down. Please check the server and reconnect!').then(() => {
+			this.ModalService.open('views/error.html', t('msg.wsDisconnect')).then(() => {
 				eventBus.emit('connectionDisrupted');
 			});
 		}

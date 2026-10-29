@@ -1,3 +1,4 @@
+import { t } from '../util/i18n';
 import { deepCopy } from '../util/deep-copy';
 
 export class HistoryService {
@@ -402,9 +403,9 @@ export class HistoryService {
 
 	// set the displayed text of the historyActionPopup
 	public setHistoryActionText(isUndo, text) {
-		var front = 'UNDO → ';
+		var front = t('history.undo');
 		if (!isUndo) {
-			front = 'REDO ← ';
+			front = t('history.redo');
 		}
 		this.ViewStateService.historyActionTxt = front + text;
 	}
