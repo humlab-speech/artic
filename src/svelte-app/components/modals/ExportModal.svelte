@@ -10,7 +10,9 @@
 	let content = $derived(getConfigTick() >= 0 ? modalService.dataExport : undefined);
 
 	function doExport() {
-		const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+		// Callers pass ready-made text (TextGrid, annotation JSON): write as-is, never re-encode
+		const text = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+		const blob = new Blob([text], { type: filename.endsWith('.json') ? 'application/json' : 'text/plain;charset=utf-8' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
