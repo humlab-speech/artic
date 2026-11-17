@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
-	"description": "Schema for DBconfig files for the EMU system",
+	"description": "Schema for the bundle a server sends (GETBUNDLE). Fields this client does not use are ignored at this level, so a server may add some (VISP's annotation-server adds annotationVersion); the annotation, media and SSFF parts stay strict.",
 	"type": "object",
 	"properties": {
 		"mediaFile": {
@@ -49,5 +49,5 @@
 	  	}
 	},
 	"required": ["annotation", "ssffFiles"],
-	"additionalProperties": false
+	"additionalProperties": true
 }
